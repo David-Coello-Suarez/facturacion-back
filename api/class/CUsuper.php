@@ -1,0 +1,260 @@
+<?php
+
+class UsuarioPermiso extends Conexion
+{
+    public function __construct()
+    {
+        parent::__construct();
+        parent::DBConexion();
+
+        date_default_timezone_set("America/Guayaquil");
+    }
+
+    public function ListarUsuarios($data)
+    {
+        try {
+            if (!isset($data['compan_compan'])) throw new Exception("Debe establecer la compañia", 1);
+
+            if (!isset($data['sucurs_compan'])) throw new Exception("Debe establcer la sucursal", 1);
+
+            $compania = intval(trim($data['compan_compan']));
+            $sucursal = intval(trim($data['sucurs_compan']));
+
+            $sql = "SELECT * FROM tb_usuari WHERE usuari_compan = $compania ";
+
+            $exec = $this->DBConsulta($sql);
+
+            if (count($exec) == 0) throw new Exception("No hya datos para mostrar $sql", 1);
+
+            $items = array();
+
+            foreach ($exec as $item) {
+
+                $item->usuari_correo = utf8_encode($item->usuari_correo);
+                $item->usuari_nombre = utf8_encode($item->usuari_nomusu);
+                $item->usuari_apelli = utf8_encode($item->usuari_apeusu);
+
+                $items[] = $item;
+            }
+
+            return Funciones::RespuestaJson(1, "", array("usuarios" => $items));
+        } catch (Exception $e) {
+
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+                $mensaje = "Error interno del servidor";
+            }
+
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
+
+    public function changeStatus($data)
+    {
+        try {
+            if (!isset($data['usuari_usuari'])) throw new Exception("Debe establecer el ID de usuario", 1);
+
+            if (!isset($data['usuari_estado'])) throw new Exception("Debe establcer el nuevo estado del usuario", 1);
+
+            $usuario = intval(trim($data['usuari_usuari']));
+            $estado = intval(trim($data['usuari_estado']));
+
+            $sql = "UPDATE tb_usuari SET usuari_estado = $estado WHERE usuari_usuari = $usuario";
+
+            $exec = $this->DBConsulta($sql, true);
+
+            if (!$exec) throw new Exception("Error al actualizar datos", 1);
+
+            $sql = "SELECT * FROM tb_usuari WHERE usuari_usuari = $usuario";
+
+            $exec = $this->DBConsulta($sql);
+
+            if (count($exec) == 0) throw new Exception("Error al obtener el usuario", 1);
+
+            $item = $exec[0];
+
+            $item->usuari_correo = utf8_encode($item->usuari_correo);
+            $item->usuari_nombre = utf8_encode($item->usuari_nombre);
+            $item->usuari_apelli = utf8_encode($item->usuari_apelli);
+
+            return Funciones::RespuestaJson(1, "", array("usuario" => $item));
+        } catch (Exception $e) {
+
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+                $mensaje = "Error interno del servidor";
+            }
+
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
+
+    public function UpdateUsuario($data)
+    {
+        try {
+            if (!isset($data['usuari_usuari'])) throw new Exception("Debe establecer el id de usuario", 1);
+            if (!isset($data['usuari_cedula'])) throw new Exception("Debe establecer la cédula", 1);
+            if (!isset($data['usuari_nombre'])) throw new Exception("Debe establecer los nombres", 1);
+            if (!isset($data['usuari_apelli'])) throw new Exception("Debe establecer los apellidos", 1);
+            if (!isset($data['usuari_correo'])) throw new Exception("Debe establecer el correo eléctronico", 1);
+
+            $id = intval(trim($data['usuari_usuari']));
+            $cedula = (trim($data['usuari_cedula']));
+            $nombres = utf8_decode(trim($data['usuari_nombre']));
+            $apellidos = utf8_decode(trim($data['usuari_apelli']));
+            $correo = (trim($data['usuari_correo']));
+
+            if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) throw new Exception("El formateo de correo no es válido", 1);
+
+            $update = "UPDATE tb_usuari SET 
+                usuari_cedula = '$cedula',
+                usuari_nomusu = '$nombres',
+                usuari_apeusu = '$apellidos',
+                usuari_correo = '$correo'
+                WHERE usuari_usuari = $id
+            ";
+
+            $exec = $this->DBConsulta($update, true);
+
+            if (!$exec) throw new Exception("Error al actualizar ".$update, 1);
+
+            $sql = "SELECT * FROM tb_usuari WHERE usuari_usuari = $id";
+
+            $exec = $this->DBConsulta($sql);
+
+            if (count($exec) == 0) throw new Exception("Error al obtener el usuario", 1);
+
+            $item = $exec[0];
+
+            $item->usuari_correo = utf8_encode($item->usuari_correo);
+            $item->usuari_nombre = utf8_encode($item->usuari_nomusu);
+            $item->usuari_apelli = utf8_encode($item->usuari_apeusu);
+
+            return Funciones::RespuestaJson(1, "Actualizado con éxito", array("usuario" => $item));
+        } catch (Exception $e) {
+
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+                $mensaje = "Error interno del servidor";
+            }
+
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
+
+    public function CrearUsuario($data)
+    {
+        try {
+            if (!isset($data['usuari_cedula'])) throw new Exception("Debe establecer la cédula", 1);
+            if (!isset($data['usuari_nombre'])) throw new Exception("Debe establecer los nombres", 1);
+            if (!isset($data['usuari_apelli'])) throw new Exception("Debe establecer los apellidos", 1);
+            if (!isset($data['usuari_correo'])) throw new Exception("Debe establecer el correo eléctronico", 1);
+            if (!isset($data['usuario_compan'])) throw new Exception("Debe establecer la empresa", 1);
+            if (!isset($data['usuario_sucurs'])) throw new Exception("Debe establecer la sucursal", 1);
+
+            $cedula = (trim($data['usuari_cedula']));
+            $nombres = utf8_decode(trim($data['usuari_nombre']));
+            $apellidos = utf8_decode(trim($data['usuari_apelli']));
+            $correo = (trim($data['usuari_correo']));
+            $compan = intval(trim($data['usuario_compan']));
+            $sucurs = intval(trim($data['usuario_sucurs']));
+
+            if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) throw new Exception("El formateo de correo no es válido", 1);
+
+            $buscar = "SELECT * FROM tb_usuari WHERE usuari_cedula = '$cedula'";
+
+            $exec = $this->DBConsulta($buscar);
+
+            if (count($exec) > 0) throw new Exception("Ya existe usuario con ese documento de identidad", 1);
+
+            $password = sha1($cedula . "-" . KEYPASS);
+
+            $insert = "INSERT INTO tb_usuari (usuari_compan, usuari_cedula, usuari_correo, usuari_nomusu, usuari_apeusu, usuari_passwor, usuari_codusu, usuari_clausu, usuari_estusu)
+                                    VALUES ($compan, '$cedula', '$correo', '$nombres', '$apellidos', '$password', 'PP', '', '1')";
+
+            $exec = $this->DBConsulta($insert, true);
+
+            if (!$exec) throw new Exception("Error al crear el usuario $insert", 1);
+
+            $sql = "SELECT * FROM tb_usuari WHERE usuari_cedula = '$cedula'";
+
+            $exec = $this->DBConsulta($sql);
+
+            if (count($exec) == 0) throw new Exception("Error al obtener el usuario", 1);
+
+            $item = $exec[0];
+
+            $item->usuari_correo = utf8_encode($item->usuari_correo);
+            $item->usuari_nombre = utf8_encode($item->usuari_nombre);
+            $item->usuari_apelli = utf8_encode($item->usuari_apelli);
+
+            return Funciones::RespuestaJson(1, "Creado con éxito", array("usuario" => $item));
+        } catch (Exception $e) {
+
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+                $mensaje = "Error interno del servidor";
+            }
+
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
+
+    public function GuardarAcceso($data)
+    {
+        try {
+            if (!isset($data['usuari_usuari'])) throw new Exception("Debe establecer el id de usuario", 1);
+            if (!isset($data['menu'])) throw new Exception("Debe establecer el menú", 1);
+
+            $id = intval(trim($data['usuari_usuari']));
+
+            $sql = "DELETE FROM tb_acceso WHERE acceso_usuari = $id";
+
+            $exec = $this->DBConsulta($sql, true);
+
+            if (!$exec) throw new Exception($sql, 1);
+
+            $menuAcces = $data['menu'];
+
+            $total = count($menuAcces);
+
+            $exeSave = 0;
+
+            foreach ($menuAcces as $item) {
+
+                $idpadre = intval($item['idpadre']);
+                $idhijo = intval($item['idhijo']);
+
+                $guardar = "INSERT INTO tb_acceso (acceso_usuari, acceso_idpadr, acceso_idmenu, acceso_compan) VALUES ($id, $idpadre, $idhijo, 0)";
+
+                $exec = $this->DBConsulta($guardar, true);
+
+                if ($exec) {
+                    $exeSave++;
+                }
+            }
+
+            if ($total != $exeSave) throw new Exception("Error al guardar los accesos", 1);
+
+            return Funciones::RespuestaJson(1, "Accesos guardados con éxito");
+        } catch (Exception $e) {
+
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+                $mensaje = "Error interno del servidor";
+            }
+
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
+}
