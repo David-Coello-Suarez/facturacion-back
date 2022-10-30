@@ -1,5 +1,6 @@
 <?php
 require_once "../config.php";
+
 ?>
 
 <!DOCTYPE html>
@@ -187,7 +188,7 @@ require_once "../config.php";
         // DATA START CLIENTE
         $sql = "SELECT *
         FROM tb_client 
-        WHERE client_codigo = " . $item->facweb_client;
+        WHERE client_client = " . $item->facweb_client;
         $exec = $conexion->DBConsulta($sql);
         $cliente = $exec[0];
         // DATA END CLIENTE
@@ -200,10 +201,10 @@ require_once "../config.php";
                     <div class="col-12">
                         <div class="row">
                             <div class="col-6 datos">
-                                Razón Social Nombres y Apellidos <?php echo strtoupper($cliente->client_apenom) ?>
+                                Razón Social Nombres y Apellidos <?php echo strtoupper($cliente->client_nombre) ?>
                             </div>
                             <div class="col-6 datos" style="text-align: center;">
-                                RUC / C.I.: <?php echo $cliente->client_cedcli ?>
+                                RUC / C.I.: <?php echo $cliente->client_cedula ?>
                             </div>
                         </div>
                     </div>
@@ -285,7 +286,7 @@ require_once "../config.php";
                             $detalle = utf8_encode($item->detfac_detalle);
 
                             if ($cantidad > 0) {
-                                $iva += number_format($item->detfac_valia, 2) * $cantidad;
+                                $iva += number_format($item->detfac_valiva, 2) * $cantidad;
                             }
 
 

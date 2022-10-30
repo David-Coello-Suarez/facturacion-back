@@ -107,7 +107,8 @@ $item->ordvis = '';
             $clave = trim($data['compan_clave']);
             $oblCont = intval($data['compan_oblcon']);
 
-            $fechaCad = date("d/m/Y", strtotime($fechaCad));
+            // $fechaCad = date("d/sm/Y", strtotime($fechaCad));
+            $fechaCad = date("m/d/Y", strtotime($fechaCad));
             // return Funciones::RespuestaJson(1, "", $fechaCad);
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) throw new Exception("Formato de correo electrónico no válido", 1);
@@ -131,7 +132,7 @@ $item->ordvis = '';
 
             $exec = $this->DBConsulta($sql, true);
 
-            if (!$exec) return Funciones::RespuestaJson(2, "Error al guardar la nueva compañia");
+            if (!$exec) return Funciones::RespuestaJson(2, "Error al guardar la nueva compañia - $sql");
 
             $sqlExiste = "SELECT * FROM tb_compan WHERE compan_docume = '$documento'";
 
@@ -176,7 +177,7 @@ $item->ordvis = '';
             if (!isset($data['compan_firma'])) throw new Exception("Debe establecer la firma", 1);
             if (!isset($data['compan_feccad'])) throw new Exception("Debe establecer la fehca de caducidad", 1);
             if (!isset($data['compan_direcc'])) throw new Exception("Debe establecer la dirección", 1);
-            // if (!isset($data['compan_clave'])) throw new Exception("debe establecer la clave de acceso", 1);
+            if (!isset($data['compan_clave'])) throw new Exception("debe establecer la clave de acceso", 1);
 
             $compan = intval($data['compan_compan']);
             $nombre = utf8_decode(trim($data['compan_nombre']));

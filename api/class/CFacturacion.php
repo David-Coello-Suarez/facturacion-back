@@ -20,7 +20,7 @@ class Facturacion extends Conexion
             $codEmpresa  = isset($data['empresa']) ? intval($data['empresa']) : 0;
             $sucursal  = isset($data['sucursal']) ? intval($data['sucursal']) : 0;
             $tipoDocumento  = isset($data['tipoDoc']) ? ($data['tipoDoc']) : "";
-            $fechaFac = date("d/n/Y", strtotime(trim($data['fechaFac'])));
+            $fechaFac = date("m/d/Y", strtotime(trim($data['fechaFac'])));
 
             if( $codEmpresa == 0 ) throw new Exception("Debe establecer la empresa", 1);
             if( $sucursal == 0 ) throw new Exception("Debe establecer la sucursal", 1);
@@ -30,29 +30,29 @@ class Facturacion extends Conexion
             } else {
                 // SI NO EXISTE GUARDAR EL CLIENTE
 
-                $documento = trim($data['client_cedcli']);
-                $cliente = trim($data['client_apenom']);
+                $documento = trim($data['client_cedula']);
+                $cliente = trim($data['client_nombre']);
                 $telefono = trim($data['client_clitlf']);
-                $email = trim($data['client_climai']);
-                $direccion = utf8_decode(trim($data['client_cliobs']));
+                $email = trim($data['client_correo']);
+                $direccion = utf8_decode(trim($data['client_direcc']));
 
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return Funciones::RespuestaJson(2, "Formato de correo electrónico no válido");
 
-                $sql = "SELECT * FROM tb_client WHERE client_cedcli = '$documento' AND client_empres = $codEmpresa";
+                $sql = "SELECT * FROM tb_client WHERE client_cedula = '$documento' AND client_empres = $codEmpresa";
 
                 $result = $this->DBConsulta($sql);
 
                 if (count($result) > 0) {
-                    $id = intval($result[0]->client_codigo);
+                    $id = intval($result[0]->client_client);
                 } else {
-                    $sql = "INSERT INTO tb_client (client_cedcli, client_apenom, client_empres, client_sucurs, client_clitlf, client_climai, client_direcc) 
-                                            VALUES ('$documento', '$cliente', $codEmpresa, $sucursal, '$telefono', '$email', '$direccion')";
+                    $sql = "INSERT INTO tb_client (client_cedula, client_nombre, client_empres,  client_clitlf, client_correo, client_direcc) 
+                                            VALUES ('$documento', '$cliente', $codEmpresa, '$telefono', '$email', '$direccion')";
 
                     $result = $this->DBConsulta($sql, true);
 
                     if (!$result) return Funciones::RespuestaJson(2, "Error al registrar usuario");
 
-                    $sql = "SELECT * FROM tb_client WHERE client_cedcli = '$documento' AND client_empres = $codEmpresa";
+                    $sql = "SELECT * FROM tb_client WHERE client_cedula = '$documento' AND client_empres = $codEmpresa";
 
                     $result = $this->DBConsulta($sql);
 
@@ -60,7 +60,7 @@ class Facturacion extends Conexion
 
                     $usuario = $result[0];
 
-                    $id = $usuario->client_codigo;
+                    $id = $usuario->client_client;
                 }
             }
 

@@ -16,7 +16,7 @@ class Producto  extends Conexion
             $empresa = intval($data);
             $sucursal = intval($data['sucursal']);
 
-            $sql = "SELECT * FROM tb_produc WHERE produc_compan = $empresa AND produc_estado IN('0','1') AND produc_isbtn IN ('1')";
+            $sql = "SELECT * FROM tb_produc WHERE produc_compan = $empresa AND produc_estado IN('0','1') AND produc_isbotn IN ('1')";
 
             $exec = $this->DBConsulta($sql);
 
@@ -145,9 +145,8 @@ class Producto  extends Conexion
     public function ChangeEstado($data)
     {
         try {
-
             $idProducto = intval($data['produc_produc']);
-            $estado = intval($data['produc_isbtn']);
+            $estado = intval($data['produc_isbotn']);
 
             $sql = "UPDATE tb_produc SET produc_isbotn = '$estado' WHERE produc_produc = $idProducto";
 
