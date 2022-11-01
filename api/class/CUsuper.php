@@ -155,8 +155,8 @@ class UsuarioPermiso extends Conexion
             if (!isset($data['usuari_nombre'])) throw new Exception("Debe establecer los nombres", 1);
             if (!isset($data['usuari_apelli'])) throw new Exception("Debe establecer los apellidos", 1);
             if (!isset($data['usuari_correo'])) throw new Exception("Debe establecer el correo eléctronico", 1);
-            if (!isset($data['usuario_compan'])) throw new Exception("Debe establecer la empresa", 1);
-            if (!isset($data['usuario_sucurs'])) throw new Exception("Debe establecer la sucursal", 1);
+            if (!isset($data['usuari_compan'])) throw new Exception("Debe establecer la empresa", 1);
+            if (!isset($data['usuari_sucurs'])) throw new Exception("Debe establecer la sucursal", 1);
 
             $cedula = (trim($data['usuari_cedula']));
             $nombres = utf8_decode(trim($data['usuari_nombre']));

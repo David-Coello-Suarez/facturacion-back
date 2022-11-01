@@ -143,7 +143,7 @@ class Compania extends Conexion
 
             unlink($rutalOld);
 
-            $rutaFirma = "c:$rutamove" . $data['compan_firma'];
+            $rutaFirma = str_replace("/", "\\", "c:$rutamove" . $data['compan_firma']);
             $update = "UPDATE tb_compan SET compan_firma = '$rutaFirma' WHERE compan_docume = '$documento'";
 
             $this->DBConsulta($update, true);
