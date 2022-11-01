@@ -34,6 +34,9 @@ if (isset($data['metodo'])) {
         case 'LISTAR_COMPAN_SUCURS':
             return print_r(json_encode($compania->ListarCompanSucurs()));
 
+        case 'ACTUALIZAR_AMBIENTE_FACTURA':
+            return print_r(json_encode($compania->ChangeModoFactura($data)));
+
         default:
             return print_r(json_encode(Funciones::RespuestaJson(2, "Metodo no encontrado")));
     }

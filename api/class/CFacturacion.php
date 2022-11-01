@@ -25,8 +25,8 @@ class Facturacion extends Conexion
             if( $codEmpresa == 0 ) throw new Exception("Debe establecer la empresa", 1);
             if( $sucursal == 0 ) throw new Exception("Debe establecer la sucursal", 1);
 
-            if (intval($data['client_codigo']) > 0) {
-                $id = intval($data['client_codigo']);
+            if (intval($data['client_client']) > 0) {
+                $id = intval($data['client_client']);
             } else {
                 // SI NO EXISTE GUARDAR EL CLIENTE
 

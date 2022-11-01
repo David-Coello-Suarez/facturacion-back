@@ -44,7 +44,7 @@ class Compania extends Conexion
     public function ListarCompaniasMan()
     {
         try {
-            $sql = "SELECT * FROM tb_compan ORDER BY compan_nombre";
+            $sql = "SELECT * FROM tb_compan WHERE compan_estado IN ('0', '1') ORDER BY compan_nombre";
 
             $exec = $this->DBConsulta($sql);
 
@@ -58,8 +58,8 @@ class Compania extends Conexion
 
                 $item->compan_feccad = date("Y-m-d", strtotime($item->compan_feccad));
 
-                if($item->compan_ordvis == '' || $item->compan_ordvis == 0  ){
-$item->ordvis = '';                    
+                if ($item->compan_ordvis == '' || $item->compan_ordvis == 0) {
+                    $item->ordvis = '';
                 }
 
                 $items[] = $item;
@@ -81,15 +81,10 @@ $item->ordvis = '';
     public function CrearCompania($data)
     {
         try {
-            // return Funciones::RespuestaJson(10, "", $data);
-
             if (!isset($data['compan_docume'])) throw new Exception("Debe establecer el número de documento", 1);
             if (!isset($data['compan_nombre'])) throw new Exception("Debe establecer el nombre de la empresa", 1);
             if (!isset($data['compan_telefo'])) throw new Exception("Debe establecer el número de telefono", 1);
             if (!isset($data['compan_email'])) throw new Exception("Debe establecer la dirección de correo", 1);
-            // if (!isset($data['compan_resolu'])) throw new Exception("Debe establecer el número de resolución", 1);
-            // if (!isset($data['compan_contri'])) throw new Exception("Debe establecer el número de contribuyente", 1);
-            // if (!isset($data['compan_oblcon'])) throw new Exception("", 1);
             if (!isset($data['compan_firma'])) throw new Exception("Debe establecer la firma", 1);
             if (!isset($data['compan_feccad'])) throw new Exception("Debe establecer la fehca de caducidad", 1);
             if (!isset($data['compan_direcc'])) throw new Exception("Debe establecer la dirección", 1);
@@ -107,9 +102,7 @@ $item->ordvis = '';
             $clave = trim($data['compan_clave']);
             $oblCont = intval($data['compan_oblcon']);
 
-            // $fechaCad = date("d/sm/Y", strtotime($fechaCad));
             $fechaCad = date("m/d/Y", strtotime($fechaCad));
-            // return Funciones::RespuestaJson(1, "", $fechaCad);
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) throw new Exception("Formato de correo electrónico no válido", 1);
 
@@ -132,7 +125,7 @@ $item->ordvis = '';
 
             $exec = $this->DBConsulta($sql, true);
 
-            if (!$exec) return Funciones::RespuestaJson(2, "Error al guardar la nueva compañia - $sql");
+            if (!$exec) return Funciones::RespuestaJson(2, "Error al guardar la nueva compañia");
 
             $sqlExiste = "SELECT * FROM tb_compan WHERE compan_docume = '$documento'";
 
@@ -149,6 +142,11 @@ $item->ordvis = '';
             if (!copy($rutalOld, $rutamove . $data['compan_firma'])) throw new Exception("Error al subir el archivo ", 1);
 
             unlink($rutalOld);
+
+            $rutaFirma = "c:$rutamove" . $data['compan_firma'];
+            $update = "UPDATE tb_compan SET compan_firma = '$rutaFirma' WHERE compan_docume = '$documento'";
+
+            $this->DBConsulta($update, true);
 
             return Funciones::RespuestaJson(1, "Éxito al guardar", array("compania" => $item));
         } catch (Exception $e) {
@@ -247,7 +245,7 @@ $item->ordvis = '';
 
             $exec = $this->DBConsulta($sql, true);
 
-            if (!$exec) throw new Exception("Error al actualizar la compañia - $sql", 1);
+            if (!$exec) throw new Exception("Error al actualizar la compañia ", 1);
 
             $sql = "SELECT * FROM tb_compan WHERE compan_compan = $id";
 
@@ -266,6 +264,45 @@ $item->ordvis = '';
 
             if ($e->getCode() != 1) $mensaje = "Error interno del servidor";
 
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
+
+    public function ChangeModoFactura($data)
+    {
+        try {
+            if (!isset($data['compan_compan'])) throw new Exception("Debe establecer el ID de la compañia", 1);
+            if (!isset($data['compan_modfac'])) throw new Exception("No se estableció el ambiente de facturación", 1);
+
+            $idcompan = intval($data['compan_compan']);
+            $ambiente =  intval($data['compan_modfac']);
+
+            if (!in_array($ambiente, array(1, 2))) throw new Exception("Estado no permitido para esta operación", 1);
+
+            $sql = "UPDATE tb_compan SET compan_modfac = $ambiente WHERE compan_compan = $idcompan";
+
+            $exec = $this->DBConsulta($sql, true);
+
+            if (!$exec) throw new Exception("Error al actualizar la compañia ", 1);
+
+            $sql = "SELECT * FROM tb_compan WHERE compan_compan = $idcompan";
+
+            $obt = $this->DBConsulta($sql);
+
+            if (!$obt) throw new Exception("Error al obtener la compañia", 1);
+
+            $obt[0]->compan_nombre = utf8_encode($obt[0]->compan_nombre);
+
+            return Funciones::RespuestaJson(1, "", array("compania" => $obt[0]));
+        } catch (Exception $e) {
+
+
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+                $mensaje = "Error interno del servidor";
+            }
             return Funciones::RespuestaJson(2, $mensaje);
         }
     }
@@ -294,9 +331,9 @@ $item->ordvis = '';
                 $execSucurs = $this->DBConsulta($sqlSucursal);
 
                 // if (count($execSucurs) > 0) {
-                    $item->compan_sucurs = $execSucurs;
+                $item->compan_sucurs = $execSucurs;
 
-                    $items[] = $item;
+                $items[] = $item;
                 // }
             }
 

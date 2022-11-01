@@ -13,3 +13,11 @@ img/*
 html2pdf
 
 TCPDF
+
+no autorizados/*
+
+generados/*
+
+firmados/*
+
+autorizado/*
