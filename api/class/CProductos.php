@@ -14,7 +14,6 @@ class Producto  extends Conexion
     {
         try {
             $empresa = intval($data);
-            $sucursal = intval($data['sucursal']);
 
             $sql = "SELECT * FROM tb_produc WHERE produc_compan = $empresa AND produc_estado IN('0','1') AND produc_isbotn IN ('1')";
 

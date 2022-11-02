@@ -41,11 +41,11 @@ class Cliente extends Conexion
                 if (is_numeric($query)) {
                     $tipo = "client_cedula";
                 } else {
-                    $tipo = "client_apenom";
+                    $tipo = "client_nombre";
                 }
 
                 $usuario["usuario"][$tipo] = $query;
-                return Funciones::RespuestaJson(2, "Usuario no encontrado ", $usuario);
+                return Funciones::RespuestaJson(2, "Usuario no encontrado", $usuario);
             } else {
 
                 $items = array();
@@ -59,12 +59,12 @@ class Cliente extends Conexion
                 return Funciones::RespuestaJson(1, "Usuarios encontrado", array("clientes" => $items));
             }
         } catch (Exception $e) {
-            
+
             $mensaje = $e->getMessage();
-            
+
             if ($e->getCode() != 1) {
                 Funciones::escribirLogs(basename(__FILE__), $e);
-                
+
                 $mensaje = "Error interno del servidor";
             }
 
@@ -100,11 +100,13 @@ class Cliente extends Conexion
             return Funciones::RespuestaJson(1, "", array("clientes" => $items));
         } catch (Exception $e) {
 
-            Funciones::escribirLogs(basename(__FILE__), $e);
-
             $mensaje = $e->getMessage();
 
-            if ($e->getCode() != 1) $mensaje = "Error interno del servidor";
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+
+                $mensaje = "Error interno del servidor";
+            }
 
             return Funciones::RespuestaJson(2, $mensaje);
         }

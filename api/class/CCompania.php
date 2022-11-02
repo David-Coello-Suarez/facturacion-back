@@ -68,11 +68,12 @@ class Compania extends Conexion
             return Funciones::RespuestaJson(1, "", array("companias" => $items));
         } catch (Exception $e) {
 
-            Funciones::escribirLogs(basename(__FILE__), $e);
-
             $mensaje = $e->getMessage();
 
-            if ($e->getCode() != 1) $mensaje = "Error interno del servidor";
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+                $mensaje = "Error interno del servidor";
+            }
 
             return Funciones::RespuestaJson(2, $mensaje);
         }
@@ -340,11 +341,13 @@ class Compania extends Conexion
             return Funciones::RespuestaJson(1, "", array("compansucurs" => $items));
         } catch (Exception $e) {
 
-            Funciones::escribirLogs(basename(__FILE__), $e);
-
             $mensaje = $e->getMessage();
 
-            if ($e->getCode() != 1) $mensaje = "Error interno del servidor";
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+
+                $mensaje = "Error interno del servidor";
+            }
 
             return Funciones::RespuestaJson(2, $mensaje);
         }

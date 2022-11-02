@@ -32,7 +32,8 @@ class Login extends Conexion
 
             $usuarioSuccess['usuario'] = array(
                 "id" => intval($item->usuari_usuari),
-                "usuario" => utf8_encode($item->usuari_nombre) . " " . utf8_encode($item->usuari_apelli)
+                "usuario" => utf8_encode($item->usuari_nombre) . " " . utf8_encode($item->usuari_apelli),
+                "tipousuario" => $item->usuari_supadm
             );
 
             $token = md5(uniqid(mt_rand(), true)) . "." . $has;

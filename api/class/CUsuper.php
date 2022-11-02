@@ -31,8 +31,8 @@ class UsuarioPermiso extends Conexion
             foreach ($exec as $item) {
 
                 $item->usuari_correo = utf8_encode($item->usuari_correo);
-                $item->usuari_nombre = utf8_encode($item->usuari_nomusu);
-                $item->usuari_apelli = utf8_encode($item->usuari_apeusu);
+                $item->usuari_nomusu = utf8_encode($item->usuari_nomusu);
+                $item->usuari_apeusu = utf8_encode($item->usuari_apeusu);
 
                 $items[] = $item;
             }
@@ -76,8 +76,8 @@ class UsuarioPermiso extends Conexion
             $item = $exec[0];
 
             $item->usuari_correo = utf8_encode($item->usuari_correo);
-            $item->usuari_nombre = utf8_encode($item->usuari_nombre);
-            $item->usuari_apelli = utf8_encode($item->usuari_apelli);
+            $item->usuari_nomusu = utf8_encode($item->usuari_nomusu);
+            $item->usuari_apeusu = utf8_encode($item->usuari_apeusu);
 
             return Funciones::RespuestaJson(1, "", array("usuario" => $item));
         } catch (Exception $e) {
@@ -98,15 +98,17 @@ class UsuarioPermiso extends Conexion
         try {
             if (!isset($data['usuari_usuari'])) throw new Exception("Debe establecer el id de usuario", 1);
             if (!isset($data['usuari_cedula'])) throw new Exception("Debe establecer la cédula", 1);
-            if (!isset($data['usuari_nombre'])) throw new Exception("Debe establecer los nombres", 1);
-            if (!isset($data['usuari_apelli'])) throw new Exception("Debe establecer los apellidos", 1);
+            if (!isset($data['usuari_nomusu'])) throw new Exception("Debe establecer los nombres", 1);
+            if (!isset($data['usuari_apeusu'])) throw new Exception("Debe establecer los apellidos", 1);
             if (!isset($data['usuari_correo'])) throw new Exception("Debe establecer el correo eléctronico", 1);
+            if (!isset($data['usuari_supadm'])) throw new Exception("Debe establecer el rol del usuario", 1);
 
             $id = intval(trim($data['usuari_usuari']));
             $cedula = (trim($data['usuari_cedula']));
-            $nombres = utf8_decode(trim($data['usuari_nombre']));
-            $apellidos = utf8_decode(trim($data['usuari_apelli']));
+            $nombres = utf8_decode(trim($data['usuari_nomusu']));
+            $apellidos = utf8_decode(trim($data['usuari_apeusu']));
             $correo = (trim($data['usuari_correo']));
+            $supadm = intval($data['usuari_supadm']);
 
             if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) throw new Exception("El formateo de correo no es válido", 1);
 
@@ -114,13 +116,14 @@ class UsuarioPermiso extends Conexion
                 usuari_cedula = '$cedula',
                 usuari_nomusu = '$nombres',
                 usuari_apeusu = '$apellidos',
-                usuari_correo = '$correo'
+                usuari_correo = '$correo',
+                usuari_supadm = $supadm
                 WHERE usuari_usuari = $id
             ";
 
             $exec = $this->DBConsulta($update, true);
 
-            if (!$exec) throw new Exception("Error al actualizar ".$update, 1);
+            if (!$exec) throw new Exception("Error al actualizar " . $update, 1);
 
             $sql = "SELECT * FROM tb_usuari WHERE usuari_usuari = $id";
 
@@ -131,8 +134,8 @@ class UsuarioPermiso extends Conexion
             $item = $exec[0];
 
             $item->usuari_correo = utf8_encode($item->usuari_correo);
-            $item->usuari_nombre = utf8_encode($item->usuari_nomusu);
-            $item->usuari_apelli = utf8_encode($item->usuari_apeusu);
+            $item->usuari_nomusu = utf8_encode($item->usuari_nomusu);
+            $item->usuari_apeusu = utf8_encode($item->usuari_apeusu);
 
             return Funciones::RespuestaJson(1, "Actualizado con éxito", array("usuario" => $item));
         } catch (Exception $e) {
@@ -152,16 +155,18 @@ class UsuarioPermiso extends Conexion
     {
         try {
             if (!isset($data['usuari_cedula'])) throw new Exception("Debe establecer la cédula", 1);
-            if (!isset($data['usuari_nombre'])) throw new Exception("Debe establecer los nombres", 1);
-            if (!isset($data['usuari_apelli'])) throw new Exception("Debe establecer los apellidos", 1);
+            if (!isset($data['usuari_nomusu'])) throw new Exception("Debe establecer los nombres", 1);
+            if (!isset($data['usuari_apeusu'])) throw new Exception("Debe establecer los apellidos", 1);
             if (!isset($data['usuari_correo'])) throw new Exception("Debe establecer el correo eléctronico", 1);
             if (!isset($data['usuari_compan'])) throw new Exception("Debe establecer la empresa", 1);
+            if (!isset($data['usuari_supadm'])) throw new Exception("Debe establecer el rol del usuario", 1);
 
             $cedula = (trim($data['usuari_cedula']));
-            $nombres = utf8_decode(trim($data['usuari_nombre']));
-            $apellidos = utf8_decode(trim($data['usuari_apelli']));
+            $nombres = utf8_decode(trim($data['usuari_nomusu']));
+            $apellidos = utf8_decode(trim($data['usuari_apeusu']));
             $correo = (trim($data['usuari_correo']));
             $compan = intval(trim($data['usuari_compan']));
+            $supadm = intval($data['usuari_supadm']);
 
             if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) throw new Exception("El formateo de correo no es válido", 1);
 
@@ -173,8 +178,8 @@ class UsuarioPermiso extends Conexion
 
             $password = sha1($cedula . "-" . KEYPASS);
 
-            $insert = "INSERT INTO tb_usuari (usuari_compan, usuari_cedula, usuari_correo, usuari_nomusu, usuari_apeusu, usuari_passwor, usuari_codusu, usuari_clausu, usuari_estusu)
-                                    VALUES ($compan, '$cedula', '$correo', '$nombres', '$apellidos', '$password', '', '', '1')";
+            $insert = "INSERT INTO tb_usuari (usuari_compan, usuari_cedula, usuari_correo, usuari_nomusu, usuari_apeusu, usuari_passwor, usuari_codusu, usuari_clausu, usuari_estusu, usuari_supadm)
+                                    VALUES ($compan, '$cedula', '$correo', '$nombres', '$apellidos', '$password', '', '', '1', $supadm )";
 
             $exec = $this->DBConsulta($insert, true);
 
@@ -189,8 +194,8 @@ class UsuarioPermiso extends Conexion
             $item = $exec[0];
 
             $item->usuari_correo = utf8_encode($item->usuari_correo);
-            $item->usuari_nombre = utf8_encode($item->usuari_nomusu);
-            $item->usuari_apelli = utf8_encode($item->usuari_apeusu);
+            $item->usuari_nomusu = utf8_encode($item->usuari_nomusu);
+            $item->usuari_apeusu = utf8_encode($item->usuari_apeusu);
 
             return Funciones::RespuestaJson(1, "Creado con éxito", array("usuario" => $item));
         } catch (Exception $e) {
@@ -199,6 +204,7 @@ class UsuarioPermiso extends Conexion
 
             if ($e->getCode() != 1) {
                 Funciones::escribirLogs(basename(__FILE__), $e);
+
                 $mensaje = "Error interno del servidor";
             }
 
@@ -243,6 +249,50 @@ class UsuarioPermiso extends Conexion
             if ($total != $exeSave) throw new Exception("Error al guardar los accesos", 1);
 
             return Funciones::RespuestaJson(1, "Accesos guardados con éxito");
+        } catch (Exception $e) {
+
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+                $mensaje = "Error interno del servidor";
+            }
+
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
+
+    public function UpdateUsuarioRol($data)
+    {
+        try {
+            if (!isset($data['usuari_usuari'])) throw new Exception("Debe establecer el id de usuario", 1);
+            if (!isset($data['usuari_supadm'])) throw new Exception("Debe establecer el nuevo rol", 1);
+
+            $id = intval(trim($data['usuari_usuari']));
+            $tipousuario = (trim($data['usuari_supadm']));
+
+            $update = "UPDATE tb_usuari SET 
+                usuari_supadm = '$tipousuario'
+                WHERE usuari_usuari = $id
+            ";
+
+            $exec = $this->DBConsulta($update, true);
+
+            if (!$exec) throw new Exception("Error al actualizar ", 1);
+
+            $sql = "SELECT * FROM tb_usuari WHERE usuari_usuari = $id";
+
+            $exec = $this->DBConsulta($sql);
+
+            if (count($exec) == 0) throw new Exception("Error al obtener el usuario", 1);
+
+            $item = $exec[0];
+
+            $item->usuari_correo = utf8_encode($item->usuari_correo);
+            $item->usuari_nomusu = utf8_encode($item->usuari_nomusu);
+            $item->usuari_apeusu = utf8_encode($item->usuari_apeusu);
+
+            return Funciones::RespuestaJson(1, "Actualizado con éxito", array("usuario" => $item));
         } catch (Exception $e) {
 
             $mensaje = $e->getMessage();

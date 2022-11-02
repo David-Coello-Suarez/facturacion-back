@@ -34,6 +34,8 @@ class FormaPago extends Conexion
 
                 $item->forpag_nombre = ucfirst(utf8_encode($item->forpag_nombre));
 
+                $item->forpag_ambfin = intval($item->pagweb_facweb);
+
                 $items[]  = $item;
 
                 $cont++;
@@ -61,6 +63,7 @@ class FormaPago extends Conexion
 
             $compan = intval($data['forpag_compan']);
             $nombre = utf8_decode(trim($data['forpag_nombre']));
+            $sisFin = intval($data['forpag_ambfin']);
 
             $sql = "SELECT * FROM tb_forpag WHERE LOWER(forpag_nombre) = '" . strtolower($nombre) . "' AND forpag_compan = $compan AND forpag_estado IN ('1','0')";
 
@@ -68,7 +71,7 @@ class FormaPago extends Conexion
 
             if (count($exec) > 0) throw new Exception("La forma de pago ya éxiste", 1);
 
-            $save = "INSERT INTO tb_forpag (forpag_compan, forpag_nombre) VALUES ($compan, '$nombre')";
+            $save = "INSERT INTO tb_forpag (forpag_compan, forpag_nombre, pagweb_facweb) VALUES ($compan, '$nombre', $sisFin)";
 
             $execSave = $this->DBConsulta($save, true);
 
@@ -140,6 +143,8 @@ class FormaPago extends Conexion
             $item->forpag_nombre = ucfirst(utf8_decode($item->forpag_nombre));
 
             $item->forpag_contad = intval($data['forpag_contad']);
+            
+            $item->forpag_ambfin = intval($item->pagweb_facweb);
 
             return Funciones::RespuestaJson(1, "Actualizado con éxito", array("formapago" => $item));
         } catch (Exception $e) {
@@ -180,9 +185,9 @@ class FormaPago extends Conexion
 
             $item->forpag_contad = intval($data['forpag_contad']);
 
-if( $data['forpag_valtot'] != "" ){
-    $item->forpag_valtot = number_format($data['forpag_valtot'], 2);
-}
+            if ($data['forpag_valtot'] != "") {
+                $item->forpag_valtot = number_format($data['forpag_valtot'], 2);
+            }
 
             return Funciones::RespuestaJson(1, "Actualizado con éxito", array("formapago" => $item));
         } catch (Exception $e) {

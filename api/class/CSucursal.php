@@ -21,6 +21,7 @@ class Sucursal extends Conexion
             if (!isset($data['sucurs_telefo'])) throw new Exception("Debe establecer el número de teléfono", 1);
             if (!isset($data['sucurs_direcc'])) throw new Exception("Debe establecer la dirección", 1);
             if (!isset($data['sucurs_compan'])) throw new Exception("Debe seleccionar la compañia", 1);
+            if (!isset($data['sucurs_numser'])) throw new Exception("Debe establecer el número de serie", 1);
 
             $docume = trim($data['sucurs_docume']);
             $nombre = utf8_decode(trim($data['sucurs_nombre']));
@@ -28,6 +29,7 @@ class Sucursal extends Conexion
             $telefo = trim($data['sucurs_telefo']);
             $direcc = utf8_decode(trim($data['sucurs_direcc']));
             $compan = intval($data['sucurs_compan']);
+            $serie = trim($data['sucurs_numser']);
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return Funciones::RespuestaJson(2, "Formato de correo no válido");
 
@@ -37,7 +39,7 @@ class Sucursal extends Conexion
 
             if (count($exec) > 0) return Funciones::RespuestaJson(2, "Ya existe sucursal con ese documento");
 
-            $sqlOrden = "SELECT MAX(sucurs_ordvis) as orden FROM tb_sucurs";
+            $sqlOrden = "SELECT MAX(sucurs_ordvis) as orden FROM tb_sucurs WHERE sucurs_compan = $compan";
 
             $exec = $this->DBConsulta($sqlOrden);
 
@@ -58,11 +60,11 @@ class Sucursal extends Conexion
 
             $id = intval($exec[0]->sucurs_sucurs);
 
-            $nSucurs = Funciones::zero_fill($orden);
-            $nFacturero = Funciones::zero_fill(1);
+            $nSucurs = $serie;
+            // $nFacturero = Funciones::zero_fill(1);
             $nSecuencia = Funciones::zero_fill(0, 9, STR_PAD_RIGHT);
 
-            $nFacIni = $nSucurs . $nFacturero . $nSecuencia;
+            $nFacIni = $nSucurs . $nSecuencia;
 
             $sql = "UPDATE tb_sucurs SET
                 sucurs_numncr = '$nFacIni',
@@ -89,6 +91,7 @@ class Sucursal extends Conexion
 
             if ($e->getCode() != 1) {
                 Funciones::escribirLogs(basename(__FILE__), $e);
+
                 $mensaje = "Error interno del servidor";
             }
 
@@ -116,6 +119,7 @@ class Sucursal extends Conexion
                 $item->sucurs_direcc = utf8_encode($item->sucurs_direcc);
                 $item->sucurs_nombre = utf8_encode($item->sucurs_nombre);
                 $item->sucurs_email = utf8_encode($item->sucurs_email);
+                $item->sucurs_numser = trim($item->sucurs_numfac);
 
                 $items[] = $item;
             }
@@ -177,9 +181,6 @@ class Sucursal extends Conexion
     public function UpdateSucursal($data)
     {
         try {
-
-            // return Funciones::RespuestaJson(1, "", $data);
-
             if (!isset($data['sucurs_sucurs'])) throw new Exception("Debe establecer el número de sucursal", 1);
             // if (!isset($data['sucurs_docume'])) throw new Exception("Debe establecer el número de documento", 1);
             if (!isset($data['sucurs_nombre'])) throw new Exception("Debe establecer el nombre de la sucursal", 1);
@@ -187,14 +188,15 @@ class Sucursal extends Conexion
             if (!isset($data['sucurs_telefo'])) throw new Exception("Debe establecer el número de teléfono", 1);
             if (!isset($data['sucurs_direcc'])) throw new Exception("Debe establecer la dirección", 1);
             if (!isset($data['sucurs_compan'])) throw new Exception("Debe seleccionar la compañia", 1);
+            if (!isset($data['sucurs_numser'])) throw new Exception("Debe establecer el número de serie", 1);
 
             $id = intval(trim($data['sucurs_sucurs']));
-            // $docume = trim($data['sucurs_docume']);
             $nombre = utf8_decode(trim($data['sucurs_nombre']));
             $email = utf8_decode(trim($data['sucurs_email']));
             $telefo = trim($data['sucurs_telefo']);
             $direcc = utf8_decode(trim($data['sucurs_direcc']));
             $compan = intval($data['sucurs_compan']);
+            $serie = trim($data['sucurs_numser']);
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) throw new Exception("Formato de correo no válido", 1);
 
@@ -204,19 +206,25 @@ class Sucursal extends Conexion
 
             $exec = $this->DBConsulta($sqlProvincia);
 
+            $sucursal = $exec[0];
+
             if (count($exec) > 0) {
-                $sucursal = $exec[0];
 
                 if ($compan != $sucursal->sucurs_compan) {
                     $cambioProvincia = true;
                 }
             }
 
+            $factur = $serie . substr($sucursal->sucurs_numfac, 6);
+            $notCre = $serie . substr($sucursal->sucurs_numncr, 6);
+
             $sqlActualizar = "UPDATE tb_sucurs SET 
                 sucurs_nombre = '$nombre',
                 sucurs_email = '$email',
                 sucurs_direcc = '$direcc',
-                sucurs_telefo = '$telefo'
+                sucurs_telefo = '$telefo',
+                sucurs_numncr = '$notCre',
+                sucurs_numfac = '$factur'
                 WHERE sucurs_sucurs = $id
             ";
 
