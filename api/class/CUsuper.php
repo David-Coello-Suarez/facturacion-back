@@ -156,14 +156,12 @@ class UsuarioPermiso extends Conexion
             if (!isset($data['usuari_apelli'])) throw new Exception("Debe establecer los apellidos", 1);
             if (!isset($data['usuari_correo'])) throw new Exception("Debe establecer el correo eléctronico", 1);
             if (!isset($data['usuari_compan'])) throw new Exception("Debe establecer la empresa", 1);
-            if (!isset($data['usuari_sucurs'])) throw new Exception("Debe establecer la sucursal", 1);
 
             $cedula = (trim($data['usuari_cedula']));
             $nombres = utf8_decode(trim($data['usuari_nombre']));
             $apellidos = utf8_decode(trim($data['usuari_apelli']));
             $correo = (trim($data['usuari_correo']));
-            $compan = intval(trim($data['usuario_compan']));
-            $sucurs = intval(trim($data['usuario_sucurs']));
+            $compan = intval(trim($data['usuari_compan']));
 
             if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) throw new Exception("El formateo de correo no es válido", 1);
 
@@ -176,11 +174,11 @@ class UsuarioPermiso extends Conexion
             $password = sha1($cedula . "-" . KEYPASS);
 
             $insert = "INSERT INTO tb_usuari (usuari_compan, usuari_cedula, usuari_correo, usuari_nomusu, usuari_apeusu, usuari_passwor, usuari_codusu, usuari_clausu, usuari_estusu)
-                                    VALUES ($compan, '$cedula', '$correo', '$nombres', '$apellidos', '$password', 'PP', '', '1')";
+                                    VALUES ($compan, '$cedula', '$correo', '$nombres', '$apellidos', '$password', '', '', '1')";
 
             $exec = $this->DBConsulta($insert, true);
 
-            if (!$exec) throw new Exception("Error al crear el usuario $insert", 1);
+            if (!$exec) throw new Exception("Error al crear el usuario", 1);
 
             $sql = "SELECT * FROM tb_usuari WHERE usuari_cedula = '$cedula'";
 
@@ -191,8 +189,8 @@ class UsuarioPermiso extends Conexion
             $item = $exec[0];
 
             $item->usuari_correo = utf8_encode($item->usuari_correo);
-            $item->usuari_nombre = utf8_encode($item->usuari_nombre);
-            $item->usuari_apelli = utf8_encode($item->usuari_apelli);
+            $item->usuari_nombre = utf8_encode($item->usuari_nomusu);
+            $item->usuari_apelli = utf8_encode($item->usuari_apeusu);
 
             return Funciones::RespuestaJson(1, "Creado con éxito", array("usuario" => $item));
         } catch (Exception $e) {

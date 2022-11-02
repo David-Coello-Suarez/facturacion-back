@@ -188,7 +188,7 @@ class Producto  extends Conexion
 
             $exec = $this->DBConsulta($sqlGuardar, true);
 
-            if (!$exec) return Funciones::RespuestaJson(2, "Error al guardar ".$sqlGuardar);
+            if (!$exec) return Funciones::RespuestaJson(2, "Error al guardar " . $sqlGuardar);
 
             $sqlRec = "SELECT * FROM tb_produc WHERE produc_codigo = '$codigo' AND produc_compan = $compania AND produc_estado IN ('0','1')";
 

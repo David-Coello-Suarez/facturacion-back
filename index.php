@@ -10,7 +10,7 @@
 
 <body>
     <?php
-    
+    phpinfo();
     ?>
 </body>
 
