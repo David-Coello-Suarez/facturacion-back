@@ -15,16 +15,13 @@ class UsuarioPermiso extends Conexion
         try {
             if (!isset($data['compan_compan'])) throw new Exception("Debe establecer la compañia", 1);
 
-            if (!isset($data['sucurs_compan'])) throw new Exception("Debe establcer la sucursal", 1);
-
             $compania = intval(trim($data['compan_compan']));
-            $sucursal = intval(trim($data['sucurs_compan']));
 
             $sql = "SELECT * FROM tb_usuari WHERE usuari_compan = $compania ";
 
             $exec = $this->DBConsulta($sql);
 
-            if (count($exec) == 0) throw new Exception("No hya datos para mostrar $sql", 1);
+            if (count($exec) == 0) throw new Exception("No hay datos para mostrar", 1);
 
             $items = array();
 

@@ -18,17 +18,25 @@ if (isset($data['metodo'])) {
 
     $token = trim($data['x-token']);
 
-    $sql = "SELECT * FROM TB_USUARI WHERE usuari_tokens = '$token' AND usuari_supadm = 0";
+    $metodoPermitidos = array("LISTAR_COMPAN_SUCURS");
 
-    $conexion = new Conexion();
-    $conexion->DBConexion();
-    $exec = $conexion->DBConsulta($sql);
+    if (in_array(trim($data['metodo']), $metodoPermitidos)) {
 
-    if (count($exec) == 0) return print_r(json_encode(Funciones::RespuestaJson(2, "No tienes acceso a esta información $sql")));
+        $sql = "SELECT * FROM TB_USUARI WHERE usuari_tokens = '$token' AND usuari_supadm = 0";
 
-    $item = $exec[0];
+        $conexion = new Conexion();
+        $conexion->DBConexion();
+        $exec = $conexion->DBConsulta($sql);
 
-    $data['compan_compan'] = intval($item->usuari_usuari);
+        $usuario = 0;
+
+        if (count($exec) > 0) {
+            $item = $exec[0];
+            $usuario = intval($item->usuari_usuari);
+        }
+
+        $data['compan_compan'] = $usuario;
+    }
 
     switch ($metodo) {
 
