@@ -308,14 +308,23 @@ class Compania extends Conexion
         }
     }
 
-    public function ListarCompanSucurs()
+    public function ListarCompanSucurs($data)
     {
         try {
+
             $sqlEmpresas = "SELECT * FROM tb_compan WHERE compan_estado = '1'";
+
+            if (intval($data['compan_compan']) > 0) {
+                $id = intval($data['compan_compan']);
+                $sqlEmpresas = "SELECT CP.* FROM TB_USUEMP AS EMP
+                INNER JOIN TB_COMPAN AS CP
+                ON EMP.USUEMP_COMPAN = CP.COMPAN_COMPAN
+                WHERE EMP.USUEMP_USUARIO = $id";
+            }
 
             $exec = $this->DBConsulta($sqlEmpresas);
 
-            if (count($exec) === 0) throw new Exception("No hay datos para mostrar", 1);
+            if (count($exec) === 0) throw new Exception("No hay datos para mostrar $sqlEmpresas", 1);
 
             $items = array();
 

@@ -35,6 +35,9 @@ if (isset($data['metodo'])) {
         case 'CAMBIO_TIPO_USUARIO':
             return print_r(json_encode($usuarioPermiso->UpdateUsuarioRol($data)));
 
+        case 'SAVE_COMPAN_ACCESS':
+            return print_r(json_encode($usuarioPermiso->GuardarAccessCompan($data)));
+
         default:
             return print_r(json_encode(Funciones::RespuestaJson(2, "Metodo no encontrado")));
     }

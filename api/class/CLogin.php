@@ -38,11 +38,11 @@ class Login extends Conexion
 
             $token = md5(uniqid(mt_rand(), true)) . "." . $has;
 
-            // $sql = "UPDATE tb_usuari SET usuari_tokens = '$token' WHERE usuari_cedula = '$usuario'";
+            $sql = "UPDATE tb_usuari SET usuari_tokens = '$token' WHERE usuari_cedula = '$usuario'";
 
-            // $exec = $this->DBConsulta($sql, true);
+            $exec = $this->DBConsulta($sql, true);
 
-            // if (!$exec) throw new Exception("Error al generar credenciales de autenticación", 1);
+            if (!$exec) throw new Exception("Error al generar credenciales de autenticación", 1);
 
             $usuarioSuccess['token'] = $token;
 

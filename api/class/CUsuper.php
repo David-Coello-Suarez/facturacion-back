@@ -215,6 +215,7 @@ class UsuarioPermiso extends Conexion
     public function GuardarAcceso($data)
     {
         try {
+            // return Funciones::RespuestaJson(2, "", $data);
             if (!isset($data['usuari_usuari'])) throw new Exception("Debe establecer el id de usuario", 1);
             if (!isset($data['menu'])) throw new Exception("Debe establecer el menú", 1);
 
@@ -299,6 +300,56 @@ class UsuarioPermiso extends Conexion
 
             if ($e->getCode() != 1) {
                 Funciones::escribirLogs(basename(__FILE__), $e);
+                $mensaje = "Error interno del servidor";
+            }
+
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
+
+    public function GuardarAccessCompan($data)
+    {
+        try {
+            $usuario = intval($data['usuario']);
+            $compans = $data['compan'];
+
+            $sqlTot = "SELECT * FROM TB_USUEMP WHERE usuemp_usuario = $usuario";
+
+            $execTot = $this->DBConsulta($sqlTot);
+
+            if (count($execTot) > 0) {
+
+                $sql = "DELETE FROM TB_USUEMP WHERE usuemp_usuario = $usuario";
+
+                $exec = $this->DBConsulta($sql, true);
+
+                if (!$exec) throw new Exception("Error al procesar las companias", 1);
+            }
+
+            $tot = 0;
+
+            foreach ($compans as $item) {
+                $compan = intval($item['compan_compan']);
+
+                $sql = "INSERT INTO TB_USUEMP (usuemp_usuario, usuemp_compan) VALUES ($usuario, $compan)";
+
+                $exec = $this->DBConsulta($sql, true);
+
+                if ($exec) {
+                    $tot++;
+                }
+            }
+
+            if ($tot != count($compans)) throw new Exception("Error al asignar las companias", 1);
+
+            return Funciones::RespuestaJson(1, "Asignados con éxito");
+        } catch (Exception $e) {
+
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+
                 $mensaje = "Error interno del servidor";
             }
 
