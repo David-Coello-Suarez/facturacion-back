@@ -314,8 +314,8 @@ class Compania extends Conexion
 
             $sqlEmpresas = "SELECT * FROM tb_compan WHERE compan_estado = '1'";
 
-            if (intval($data['compan_compan']) > 0) {
-                $id = intval($data['compan_compan']);
+            if (intval($data['usuemp_compan']) > 0 ) {
+                $id = intval($data['usuemp_compan']);
                 $sqlEmpresas = "SELECT CP.* FROM TB_USUEMP AS EMP
                 INNER JOIN TB_COMPAN AS CP
                 ON EMP.USUEMP_COMPAN = CP.COMPAN_COMPAN
@@ -324,7 +324,7 @@ class Compania extends Conexion
 
             $exec = $this->DBConsulta($sqlEmpresas);
 
-            if (count($exec) === 0) throw new Exception("No hay datos para mostrar $sqlEmpresas", 1);
+            if (count($exec) === 0) throw new Exception("No hay datos para mostrar", 1);
 
             $items = array();
 
@@ -340,11 +340,11 @@ class Compania extends Conexion
 
                 $execSucurs = $this->DBConsulta($sqlSucursal);
 
-                // if (count($execSucurs) > 0) {
-                $item->compan_sucurs = $execSucurs;
+                if (count($execSucurs) > 0) {
+                    $item->compan_sucurs = $execSucurs;
 
-                $items[] = $item;
-                // }
+                    $items[] = $item;
+                }
             }
 
             return Funciones::RespuestaJson(1, "", array("compansucurs" => $items));
@@ -365,7 +365,11 @@ class Compania extends Conexion
     public function CheckCompan($data)
     {
         try {
+<<<<<<< Updated upstream
             $id = intval($data['usuario']);
+=======
+            $id = intval($data['usuemp_compan']);
+>>>>>>> Stashed changes
             $sqlEmpresas = "SELECT CP.* FROM TB_USUEMP AS EMP
                 INNER JOIN TB_COMPAN AS CP
                 ON EMP.USUEMP_COMPAN = CP.COMPAN_COMPAN
@@ -378,7 +382,11 @@ class Compania extends Conexion
             $items = array();
 
             foreach ($exec as $item) {
+<<<<<<< Updated upstream
                 $items[]['compan_compan'] = intval($item->compan_compan);
+=======
+                $items[]['compan'] = intval($item->compan_compan);
+>>>>>>> Stashed changes
             }
 
             return Funciones::RespuestaJson(1, "", array("companias" => $items));

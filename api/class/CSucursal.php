@@ -33,7 +33,7 @@ class Sucursal extends Conexion
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return Funciones::RespuestaJson(2, "Formato de correo no válido");
 
-            $sqlExiste = "SELECT * FROM tb_sucurs WHERE sucurs_docume = '$docume'";
+            $sqlExiste = "SELECT * FROM tb_sucurs WHERE sucurs_docume = '$docume' AND sucurs_compan = $compan";
 
             $exec = $this->DBConsulta($sqlExiste);
 
