@@ -148,4 +148,38 @@ class Menu extends Conexion
             return Funciones::RespuestaJson(2, $mensaje);
         }
     }
+
+    public function cargarMenu($data)
+    {
+        try {
+            $usuario = intval($data['usuario']);
+
+            $sql = "SELECT * FROM TB_ACCESO WHERE ACCESO_USUARI = $usuario";
+
+            $exec = $this->DBConsulta($sql);
+
+            if (count($exec) == 0) throw new Exception("No hay datos para mostrar", 1);
+
+            $items = array();
+            $cont = 0;
+
+            foreach ($exec as $item) {
+                $items[$cont]['idpadre'] = intval($item->acceso_idpadr);
+                $items[$cont]['idhijo'] = intval($item->acceso_idmenu);
+
+                $cont++;
+            }
+
+            return Funciones::RespuestaJson(1, "", array("menuAsignado" => $items));
+        } catch (Exception $e) {
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+                $mensaje = "Error interno del servidor";
+            }
+
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
 }

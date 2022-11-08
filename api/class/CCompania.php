@@ -361,4 +361,38 @@ class Compania extends Conexion
             return Funciones::RespuestaJson(2, $mensaje);
         }
     }
+
+    public function CheckCompan($data)
+    {
+        try {
+            $id = intval($data['usuario']);
+            $sqlEmpresas = "SELECT CP.* FROM TB_USUEMP AS EMP
+                INNER JOIN TB_COMPAN AS CP
+                ON EMP.USUEMP_COMPAN = CP.COMPAN_COMPAN
+                WHERE EMP.USUEMP_USUARIO = $id";
+
+            $exec = $this->DBConsulta($sqlEmpresas);
+
+            if (count($exec) == 0) return Funciones::RespuestaJson(2, "No hay datos seleccionados");
+
+            $items = array();
+
+            foreach ($exec as $item) {
+                $items[]['compan_compan'] = intval($item->compan_compan);
+            }
+
+            return Funciones::RespuestaJson(1, "", array("companias" => $items));
+        } catch (Exception $e) {
+
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+
+                $mensaje = "Error interno del servidor";
+            }
+
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
 }

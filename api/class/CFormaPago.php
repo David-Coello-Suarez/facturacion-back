@@ -118,12 +118,6 @@ class FormaPago extends Conexion
             $formapago = intval($data['forpag_forpag']);
             $nombre = utf8_decode(trim($data['forpag_nombre']));
 
-            $sql = "SELECT * FROM tb_forpag WHERE LOWER(forpag_nombre) = '" . strtolower($nombre) . "' AND forpag_compan = $compan";
-
-            $exec = $this->DBConsulta($sql);
-
-            if (count($exec) > 0) throw new Exception("La forma de pago ya éxiste", 1);
-
             $actualizar = "UPDATE tb_forpag SET 
                     forpag_nombre = '$nombre',
                     forpag_compan = $compan
@@ -143,8 +137,6 @@ class FormaPago extends Conexion
             $item->forpag_nombre = ucfirst(utf8_decode($item->forpag_nombre));
 
             $item->forpag_contad = intval($data['forpag_contad']);
-            
-            $item->forpag_ambfin = intval($item->pagweb_facweb);
 
             return Funciones::RespuestaJson(1, "Actualizado con éxito", array("formapago" => $item));
         } catch (Exception $e) {

@@ -31,6 +31,10 @@ if (isset($data['metodo'])) {
         case "ACTUALIZAR_ESTADO":
             return print_r(json_encode($menu->CambiarEstado($data)));
 
+        case 'CARGAR_MENU':
+            return print_r(json_encode($menu->cargarMenu($data)));
+
+
         default:
             return print_r(json_encode(Funciones::RespuestaJson(2, "Metodo no encontrado")));
     }
