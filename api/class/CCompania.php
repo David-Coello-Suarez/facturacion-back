@@ -365,11 +365,7 @@ class Compania extends Conexion
     public function CheckCompan($data)
     {
         try {
-<<<<<<< Updated upstream
             $id = intval($data['usuario']);
-=======
-            $id = intval($data['usuemp_compan']);
->>>>>>> Stashed changes
             $sqlEmpresas = "SELECT CP.* FROM TB_USUEMP AS EMP
                 INNER JOIN TB_COMPAN AS CP
                 ON EMP.USUEMP_COMPAN = CP.COMPAN_COMPAN
@@ -382,11 +378,7 @@ class Compania extends Conexion
             $items = array();
 
             foreach ($exec as $item) {
-<<<<<<< Updated upstream
                 $items[]['compan_compan'] = intval($item->compan_compan);
-=======
-                $items[]['compan'] = intval($item->compan_compan);
->>>>>>> Stashed changes
             }
 
             return Funciones::RespuestaJson(1, "", array("companias" => $items));
