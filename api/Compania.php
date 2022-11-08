@@ -20,7 +20,7 @@ if (isset($data['metodo'])) {
 
     $metodoPermitidos = array("LISTAR_COMPAN_SUCURS");
 
-    if (in_array(trim($data['metodo']), $metodoPermitidos)) {
+    if (in_array(trim($metodo), $metodoPermitidos)) {
 
         $sql = "SELECT * FROM TB_USUARI WHERE usuari_tokens = '$token' AND usuari_supadm = 0";
 

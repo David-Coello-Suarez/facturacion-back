@@ -66,7 +66,7 @@ class Producto  extends Conexion
                 $sqlWhere = "WHERE LOWER(produc_nombre) LIKE '%$nombre%'";
             }
 
-            $sql = "SELECT * FROM TB_PRODUC $sqlWhere AND produc_compan = $empresa AND produc_sucurs = $sucursal ORDER BY produc_produc";
+            $sql = "SELECT * FROM TB_PRODUC $sqlWhere AND produc_compan = $empresa ORDER BY produc_produc";
 
             $execItem = $this->DBConsulta($sql);
 
@@ -174,7 +174,6 @@ class Producto  extends Conexion
             $precio = floatval($data['precio']);
             $iva = intval($data['iva']);
             $compania = isset($data['compania']) ? intval($data['compania']) : 1;
-            // $sucursal = isset($data['sucursal']) ? intval($data['sucursal']) : 1;
 
             $sql = "SELECT * FROM tb_produc WHERE produc_codigo = '$codigo' AND produc_compan = $compania  AND produc_estado IN ('0','1')";
 
@@ -182,8 +181,14 @@ class Producto  extends Conexion
 
             if (count($exec) > 0) return Funciones::RespuestaJson(2, "Código de producto ya existe");
 
-            $sqlGuardar = "INSERT INTO tb_produc (produc_compan,  produc_codigo, produc_nombre, produc_precio, produc_poriva )
-                                                VALUES ($compania,  '$codigo', '$nombre', '$precio', '$iva')";
+            $iseditable = "N";
+
+            if (number_format($precio, 2) == 0.00) {
+                $iseditable = "S";
+            }
+
+            $sqlGuardar = "INSERT INTO tb_produc (produc_compan,  produc_codigo, produc_nombre, produc_precio, produc_poriva, produc_isedit )
+                                                VALUES ($compania,  '$codigo', '$nombre', '$precio', '$iva', '$iseditable')";
 
             $exec = $this->DBConsulta($sqlGuardar, true);
 
