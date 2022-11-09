@@ -149,6 +149,26 @@ class Compania extends Conexion
 
             $this->DBConsulta($update, true);
 
+            
+            // START CREAR Y GUARDAR SUCURSAL
+
+            $sqlOrden = "SELECT MAX(sucurs_ordvis) as orden FROM tb_sucurs WHERE sucurs_compan = $item->compan_compan";
+
+            $exec = $this->DBConsulta($sqlOrden);
+
+            if (count($exec) == 0) return Funciones::RespuestaJson(2, "Error al obtener el orden");
+
+            $orden = intval($exec[0]->orden) + 1;
+            // , sucurs_numncr, sucurs_numfac sucurs_docume, '$docume', 
+            $sql = "INSERT INTO tb_sucurs (sucurs_compan,  sucurs_nombre, sucurs_email, sucurs_direcc, sucurs_telefo, sucurs_ordvis, sucurs_numncr, sucurs_numfac)
+                                VALUES ($item->compan_compan, '$nombre', '$email', '$direccion', '$telefono', $orden, '001001000000000', '001001000000000')";
+
+            $exec = $this->DBConsulta($sql, true);
+
+            if (!$exec) return Funciones::RespuestaJson(2, "Error al guardar la sucursal");
+
+            // END CREAR Y GUARDAR SUCURSAL
+
             return Funciones::RespuestaJson(1, "Éxito al guardar", array("compania" => $item));
         } catch (Exception $e) {
 
@@ -314,7 +334,7 @@ class Compania extends Conexion
 
             $sqlEmpresas = "SELECT * FROM tb_compan WHERE compan_estado = '1'";
 
-            if (intval($data['usuemp_compan']) > 0 ) {
+            if (intval($data['usuemp_compan']) > 0) {
                 $id = intval($data['usuemp_compan']);
                 $sqlEmpresas = "SELECT CP.* FROM TB_USUEMP AS EMP
                 INNER JOIN TB_COMPAN AS CP

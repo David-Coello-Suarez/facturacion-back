@@ -15,7 +15,7 @@ class Sucursal extends Conexion
         try {
             // return Funciones::RespuestaJson(1, "", $data);
 
-            if (!isset($data['sucurs_docume'])) throw new Exception("Debe establecer el número de documento", 1);
+            // if (!isset($data['sucurs_docume'])) throw new Exception("Debe establecer el número de documento", 1);
             if (!isset($data['sucurs_nombre'])) throw new Exception("Debe establecer el nombre de la sucursal", 1);
             if (!isset($data['sucurs_email'])) throw new Exception("Debe eestablecer el correo electrónico", 1);
             if (!isset($data['sucurs_telefo'])) throw new Exception("Debe establecer el número de teléfono", 1);
@@ -23,7 +23,7 @@ class Sucursal extends Conexion
             if (!isset($data['sucurs_compan'])) throw new Exception("Debe seleccionar la compañia", 1);
             if (!isset($data['sucurs_numser'])) throw new Exception("Debe establecer el número de serie", 1);
 
-            $docume = trim($data['sucurs_docume']);
+            // $docume = trim($data['sucurs_docume']);
             $nombre = utf8_decode(trim($data['sucurs_nombre']));
             $email = utf8_decode(trim($data['sucurs_email']));
             $telefo = trim($data['sucurs_telefo']);
@@ -33,11 +33,11 @@ class Sucursal extends Conexion
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return Funciones::RespuestaJson(2, "Formato de correo no válido");
 
-            $sqlExiste = "SELECT * FROM tb_sucurs WHERE sucurs_docume = '$docume' AND sucurs_compan = $compan";
+            // $sqlExiste = "SELECT * FROM tb_sucurs WHERE sucurs_docume = '$docume' AND sucurs_compan = $compan";
 
-            $exec = $this->DBConsulta($sqlExiste);
+            // $exec = $this->DBConsulta($sqlExiste);
 
-            if (count($exec) > 0) return Funciones::RespuestaJson(2, "Ya existe sucursal con ese documento");
+            // if (count($exec) > 0) return Funciones::RespuestaJson(2, "Ya existe sucursal con ese documento");
 
             $sqlOrden = "SELECT MAX(sucurs_ordvis) as orden FROM tb_sucurs WHERE sucurs_compan = $compan";
 
@@ -46,15 +46,15 @@ class Sucursal extends Conexion
             if (count($exec) == 0) return Funciones::RespuestaJson(2, "Error al obtener el orden");
 
             $orden = intval($exec[0]->orden) + 1;
-            // , sucurs_numncr, sucurs_numfac
-            $sql = "INSERT INTO tb_sucurs (sucurs_compan, sucurs_docume, sucurs_nombre, sucurs_email, sucurs_direcc, sucurs_telefo, sucurs_ordvis)
-                                VALUES ($compan, '$docume', '$nombre', '$email', '$direcc', '$telefo', $orden)";
+            // , sucurs_numncr, sucurs_numfac sucurs_docume, '$docume', 
+            $sql = "INSERT INTO tb_sucurs (sucurs_compan,  sucurs_nombre, sucurs_email, sucurs_direcc, sucurs_telefo, sucurs_ordvis)
+                                VALUES ($compan, '$nombre', '$email', '$direcc', '$telefo', $orden)";
 
             $exec = $this->DBConsulta($sql, true);
 
             if (!$exec) return Funciones::RespuestaJson(2, "Error al guardar la sucursal");
 
-            $sql = "SELECT sucurs_sucurs FROM tb_sucurs WHERE sucurs_docume = '$docume'";
+            $sql = "SELECT sucurs_sucurs FROM tb_sucurs WHERE sucurs_ordvis = '$orden' AND sucurs_compan = $compan";
 
             $exec = $this->DBConsulta($sql);
 
@@ -76,7 +76,7 @@ class Sucursal extends Conexion
 
             if (!$exec) return Funciones::RespuestaJson(2, "Error al guardar secuencia de facturas");
 
-            $sql = "SELECT * FROM tb_sucurs WHERE sucurs_docume = '$docume'";
+            $sql = "SELECT * FROM tb_sucurs WHERE sucurs_ordvis = '$orden' AND sucurs_compan = $compan";
 
             $exec = $this->DBConsulta($sql);
 
