@@ -122,7 +122,7 @@ class Facturacion extends Conexion
             foreach ($formasPago as $item) {
                 $tipo = intval(trim($item['forpag_forpag']));
                 $nombre = utf8_decode(trim($item['forpag_nombre']));
-                $pago = number_format(trim($item['forpag_valtot']), 2);
+                $pago = number_format(trim(str_replace(",", "", $item['forpag_valtot'])), 2);
 
                 $sqlGuardar = "INSERT INTO tb_pagweb (pagweb_facweb, pagweb_forPag, pagweb_descri, pagweb_valPag)
                                                     VALUES ($idFactura, '$tipo', '$nombre', '$pago')";
