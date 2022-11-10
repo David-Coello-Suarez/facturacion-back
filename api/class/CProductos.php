@@ -151,9 +151,18 @@ class Producto  extends Conexion
 
             $exec = $this->DBConsulta($sql, true);
 
-            if (!$exec) return Funciones::RespuestaJson(2, "Error al procesar datos ");
+            if (!$exec) return Funciones::RespuestaJson(2, "Error al procesar datos");
 
-            return Funciones::RespuestaJson(1, "", array("producto" => $data));
+            $sqlProduc = "SELECT * FROM tb_produc WHERE produc_produc = $idProducto";
+
+            $exec = $this->DBConsulta($sqlProduc);
+
+            if (count($exec) == 0)  return Funciones::RespuestaJson(2, "Error al obtener los datos");
+
+            $item = $exec[0];
+            $item->produc_posici = intval($data['produc_posici']);
+
+            return Funciones::RespuestaJson(1, "", array("producto" => $item));
         } catch (Exception $e) {
 
             Funciones::escribirLogs(basename(__FILE__), $e);
