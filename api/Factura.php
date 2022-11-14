@@ -129,12 +129,7 @@ require_once "../config.php";
             <div class="col-7">
 
                 <div class="card border-0">
-                    <!-- <img src="//<?php echo $_SERVER['SERVER_NAME'] . ":" . $_SERVER['SERVER_PORT'] ?>/img/logo.png" alt="logo" style="width: 100px;" class="card-img-top"> -->
-                    <?php
-                    $imagen = str_replace("\\", '/', $sucur->sucurs_logsuc);
-                    $rutaImg = str_replace("c:/", $_SERVER['SERVER_NAME'] . ":" . $_SERVER['SERVER_PORT'].'/', $imagen);
-                    ?>
-
+                    
                     <img src="LeerImg.php?image=<?php echo $sucur->sucurs_logsuc; ?>" alt="logo" style="width: 100px;" class="card-img-top">
 
                     <div class="card-body">
