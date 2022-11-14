@@ -20,7 +20,9 @@ class Menu extends Conexion
             INNER JOIN tb_acceso AS acc
             ON acc.acceso_idpadr = men.menweb_menweb
             WHERE men.menweb_estado = 1
-            AND acc.acceso_usuari = $id";
+            AND acc.acceso_usuari = $id
+            ORDER BY MENWEB_ORDVIS
+            ";
 
             $exec = $this->DBConsulta($sqlAccesos);
 
@@ -30,6 +32,7 @@ class Menu extends Conexion
 
             foreach ($exec as $item) {
                 $idpadre = intval($item->menweb_menweb);
+                $item->menweb_ventan = utf8_encode($item->menweb_ventan);
 
                 $sql = "SELECT men.* 
                 FROM tb_menweb as men

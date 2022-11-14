@@ -17,7 +17,11 @@ class UsuarioPermiso extends Conexion
 
             $compania = intval(trim($data['compan_compan']));
 
-            $sql = "SELECT * FROM tb_usuari WHERE usuari_compan = $compania ";
+            $sql = "SELECT COMPAN.USUEMP_COMPAN, USUARI.* 
+            FROM TB_USUEMP AS COMPAN
+            INNER JOIN TB_USUARI AS USUARI
+            ON COMPAN.USUEMP_USUARIO = USUARI.USUARI_USUARI
+            WHERE COMPAN.USUEMP_COMPAN = $compania";
 
             $exec = $this->DBConsulta($sql);
 
@@ -34,7 +38,7 @@ class UsuarioPermiso extends Conexion
                 $items[] = $item;
             }
 
-            return Funciones::RespuestaJson(1, "", array("usuarios" => $items));
+            return Funciones::RespuestaJson(1, "", array("usuarios" => $items, $sql));
         } catch (Exception $e) {
 
             $mensaje = $e->getMessage();

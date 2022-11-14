@@ -14,6 +14,10 @@ class Facturacion extends Conexion
     {
 
         try {
+            // && (trim($data['client_cedula']) === "0999999999999" || trim($data['client_cedula']) === "0999999999") && ((strlen(trim($data['client_cedula'])) === 13 || strlen(trim($data['client_cedula']))) === 10)
+
+            if (floatval($data['total']) > 200 && (trim($data['client_cedula']) === "0999999999999" || trim($data['client_cedula']) === "0999999999") ) return Funciones::RespuestaJson(2, "No debe superar los $200 en consumidor final");
+            
             // return Funciones::RespuestaJson(9, "", $data);
 
             $id = 0;
@@ -22,19 +26,23 @@ class Facturacion extends Conexion
             $tipoDocumento  = isset($data['tipoDoc']) ? ($data['tipoDoc']) : "";
             $fechaFac = date("m/d/Y", strtotime(trim($data['fechaFac'])));
 
-            if( $codEmpresa == 0 ) throw new Exception("Debe establecer la empresa", 1);
-            if( $sucursal == 0 ) throw new Exception("Debe establecer la sucursal", 1);
+            if ($codEmpresa == 0) throw new Exception("Debe establecer la empresa", 1);
+            if ($sucursal == 0) throw new Exception("Debe establecer la sucursal", 1);
+
+            $documento = trim($data['client_cedula']);
+            $cliente = utf8_decode(trim($data['client_nombre']));
+            $telefono = trim($data['client_clitlf']);
+            $email = trim($data['client_correo']);
+            $direccion = utf8_decode(trim($data['client_direcc']));
 
             if (intval($data['client_client']) > 0) {
                 $id = intval($data['client_client']);
+
+                $sqlUpdate = "UPDATE TB_CLIENT SET client_nombre = '$cliente', client_clitlf = '$telefono', client_correo = '$email', client_direcc = '$direccion' WHERE client_client = $id";
+
+                $execUpd = $this->DBConsulta($sqlUpdate, true);
             } else {
                 // SI NO EXISTE GUARDAR EL CLIENTE
-
-                $documento = trim($data['client_cedula']);
-                $cliente = trim($data['client_nombre']);
-                $telefono = trim($data['client_clitlf']);
-                $email = trim($data['client_correo']);
-                $direccion = utf8_decode(trim($data['client_direcc']));
 
                 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return Funciones::RespuestaJson(2, "Formato de correo electrónico no válido");
 
@@ -44,6 +52,10 @@ class Facturacion extends Conexion
 
                 if (count($result) > 0) {
                     $id = intval($result[0]->client_client);
+
+                    $sqlUpdate = "UPDATE TB_CLIENT SET client_nombre = '$cliente', client_clitlf = '$telefono', client_correo = '$email', client_direcc = '$direccion' WHERE client_client = $id";
+
+                    $execUpd = $this->DBConsulta($sqlUpdate, true);
                 } else {
                     $sql = "INSERT INTO tb_client (client_cedula, client_nombre, client_empres,  client_clitlf, client_correo, client_direcc) 
                                             VALUES ('$documento', '$cliente', $codEmpresa, '$telefono', '$email', '$direccion')";

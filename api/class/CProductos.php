@@ -315,6 +315,7 @@ class Producto  extends Conexion
     public function ProductoEditable($data)
     {
         try {
+            
             $id = intval(trim($data['produc_produc']));
             $tipo = strtoupper(trim($data['produc_isedit']));
 
@@ -326,11 +327,11 @@ class Producto  extends Conexion
 
             $sql = "SELECT * FROM tb_produc WHERE produc_produc = '$id'";
 
-            $exec = $this->DBConsulta($sql);
+            $execData = $this->DBConsulta($sql);
 
-            if (count($exec) == 0) return Funciones::RespuestaJson(2, "Error al obtener la sucursal");
+            if (count($execData) == 0) return Funciones::RespuestaJson(2, "Error al obtener la sucursal");
 
-            return Funciones::RespuestaJson(1, "Actualizado con éxito", array("producto" => $exec[0]));
+            return Funciones::RespuestaJson(1, "Actualizado con éxito", array("producto" => $execData[0]));
         } catch (Exception $e) {
 
             Funciones::escribirLogs(basename(__FILE__), $e);

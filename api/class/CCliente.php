@@ -51,7 +51,7 @@ class Cliente extends Conexion
                 $items = array();
 
                 foreach ($exec as $item) {
-                    $item->client_nombre = $item->client_nombre;
+                    $item->client_nombre = utf8_encode($item->client_nombre);
 
                     $items[] = $item;
                 }
