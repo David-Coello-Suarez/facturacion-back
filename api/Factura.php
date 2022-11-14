@@ -424,13 +424,13 @@ require_once "../config.php";
     </div>
 
     <script>
-        // window.onload = function() {
-        //     window.print()
+        window.onload = function() {
+            window.print()
 
-        //     setTimeout(function() {
-        //         window.close();
-        //     }, 100);
-        // }
+            setTimeout(function() {
+                window.close();
+            }, 100);
+        }
     </script>
 
 
