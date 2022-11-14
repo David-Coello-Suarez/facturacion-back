@@ -11,7 +11,13 @@ header("Content-Type: application/json; charset=UTF-8");
 
 require_once "../util/system/Funciones.php";
 
-$archivo = $_FILES['compan_firma'];
+$archivo;
+
+if (isset($_FILES['compan_firma'])) {
+    $archivo = $_FILES['compan_firma'];
+} else if (isset($_FILES['sucurs_logsuc'])) {
+    $archivo = $_FILES['sucurs_logsuc'];
+}
 
 $name = uniqid() . $archivo['name'];
 $tipo = $archivo['type'];
@@ -20,7 +26,7 @@ $tmpname = $archivo['tmp_name'];
 $extension = explode(".", $name);
 $extension = $extension[count($extension) - 1];
 
-$extenciones = array("p12");
+$extenciones = array("p12", 'png', 'jpg', 'jpeg');
 
 $ruta = "/tempfile/";
 

@@ -22,6 +22,7 @@ class Sucursal extends Conexion
             if (!isset($data['sucurs_direcc'])) throw new Exception("Debe establecer la dirección", 1);
             if (!isset($data['sucurs_compan'])) throw new Exception("Debe seleccionar la compañia", 1);
             if (!isset($data['sucurs_numser'])) throw new Exception("Debe establecer el número de serie", 1);
+            if (!isset($data['sucurs_logsuc']) || !isset($data['sucurs_rutfil'])) throw new Exception("Debe establecer el logo de la sucursal", 1);
 
             // $docume = trim($data['sucurs_docume']);
             $nombre = utf8_decode(trim($data['sucurs_nombre']));
@@ -30,14 +31,10 @@ class Sucursal extends Conexion
             $direcc = utf8_decode(trim($data['sucurs_direcc']));
             $compan = intval($data['sucurs_compan']);
             $serie = trim($data['sucurs_numser']);
+            $RutaLogoTemp = trim($data['sucurs_rutfil']);
+            $rutaLogo = trim($data['sucurs_logsuc']);
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) return Funciones::RespuestaJson(2, "Formato de correo no válido");
-
-            // $sqlExiste = "SELECT * FROM tb_sucurs WHERE sucurs_docume = '$docume' AND sucurs_compan = $compan";
-
-            // $exec = $this->DBConsulta($sqlExiste);
-
-            // if (count($exec) > 0) return Funciones::RespuestaJson(2, "Ya existe sucursal con ese documento");
 
             $sqlOrden = "SELECT MAX(sucurs_ordvis) as orden FROM tb_sucurs WHERE sucurs_compan = $compan";
 
@@ -60,15 +57,27 @@ class Sucursal extends Conexion
 
             $id = intval($exec[0]->sucurs_sucurs);
 
+            $rutamove = "/firmas/$compan/$id/";
+
+            if (!file_exists($rutamove)) mkdir($rutamove, 0777, true);
+
+            $rutalOld = $RutaLogoTemp;
+
+            if (!copy($rutalOld, $rutamove . $rutaLogo)) throw new Exception("Error al subir el archivo ", 1);
+
+            unlink($rutalOld);
+
+            $rutaComplete = str_replace("/", "\\", "c:$rutamove" . "$rutaLogo");
+
             $nSucurs = $serie;
-            // $nFacturero = Funciones::zero_fill(1);
             $nSecuencia = Funciones::zero_fill(0, 9, STR_PAD_RIGHT);
 
             $nFacIni = $nSucurs . $nSecuencia;
 
             $sql = "UPDATE tb_sucurs SET
                 sucurs_numncr = '$nFacIni',
-                sucurs_numfac = '$nFacIni'
+                sucurs_numfac = '$nFacIni',
+                sucurs_logsuc = '$rutaComplete'
                 WHERE sucurs_sucurs = $id
             ";
 
@@ -189,6 +198,8 @@ class Sucursal extends Conexion
             if (!isset($data['sucurs_direcc'])) throw new Exception("Debe establecer la dirección", 1);
             if (!isset($data['sucurs_compan'])) throw new Exception("Debe seleccionar la compañia", 1);
             if (!isset($data['sucurs_numser'])) throw new Exception("Debe establecer el número de serie", 1);
+            if (!isset($data['sucurs_logsuc']) || !isset($data['sucurs_rutfil'])) throw new Exception("Debe establecer el logo de la sucursal", 1);
+
 
             $id = intval(trim($data['sucurs_sucurs']));
             $nombre = utf8_decode(trim($data['sucurs_nombre']));
@@ -197,6 +208,8 @@ class Sucursal extends Conexion
             $direcc = utf8_decode(trim($data['sucurs_direcc']));
             $compan = intval($data['sucurs_compan']);
             $serie = trim($data['sucurs_numser']);
+            $RutaLogoTemp = trim($data['sucurs_rutfil']);
+            $rutaLogo = trim($data['sucurs_logsuc']);
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) throw new Exception("Formato de correo no válido", 1);
 
@@ -218,13 +231,26 @@ class Sucursal extends Conexion
             $factur = $serie . substr($sucursal->sucurs_numfac, 6);
             $notCre = $serie . substr($sucursal->sucurs_numncr, 6);
 
+            $rutamove = "/firmas/$compan/$id/";
+
+            if (!file_exists($rutamove)) mkdir($rutamove, 0777, true);
+
+            $rutalOld = $RutaLogoTemp;
+
+            $rutaComplete = str_replace("/", "\\", "c:$rutamove" . "$rutaLogo");
+
+            if (!copy($rutalOld, $rutamove . $rutaLogo)) throw new Exception("Error al subir el archivo ", 1);
+
+            unlink($rutalOld);
+
             $sqlActualizar = "UPDATE tb_sucurs SET 
                 sucurs_nombre = '$nombre',
                 sucurs_email = '$email',
                 sucurs_direcc = '$direcc',
                 sucurs_telefo = '$telefo',
                 sucurs_numncr = '$notCre',
-                sucurs_numfac = '$factur'
+                sucurs_numfac = '$factur',
+                sucurs_logsuc = '$rutaComplete'
                 WHERE sucurs_sucurs = $id
             ";
 
