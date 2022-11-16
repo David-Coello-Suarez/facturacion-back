@@ -14,10 +14,11 @@ class Facturacion extends Conexion
     {
 
         try {
+            // return Funciones::RespuestaJson(2, "", $data);
             // && (trim($data['client_cedula']) === "0999999999999" || trim($data['client_cedula']) === "0999999999") && ((strlen(trim($data['client_cedula'])) === 13 || strlen(trim($data['client_cedula']))) === 10)
 
-            if (floatval($data['total']) > 200 && (trim($data['client_cedula']) === "0999999999999" || trim($data['client_cedula']) === "0999999999") ) return Funciones::RespuestaJson(2, "No debe superar los $200 en consumidor final");
-            
+            if (floatval($data['total']) > 200 && (trim($data['client_cedula']) === "0999999999999" || trim($data['client_cedula']) === "0999999999")) return Funciones::RespuestaJson(2, "No debe superar los $200 en consumidor final");
+
             // return Funciones::RespuestaJson(9, "", $data);
 
             $id = 0;
