@@ -113,12 +113,15 @@ class UsuarioPermiso extends Conexion
 
             if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) throw new Exception("El formateo de correo no es válido", 1);
 
+            $claveEncript = sha1($cedula . "-" . KEYPASS);
+
             $update = "UPDATE tb_usuari SET 
                 usuari_cedula = '$cedula',
                 usuari_nomusu = '$nombres',
                 usuari_apeusu = '$apellidos',
                 usuari_correo = '$correo',
-                usuari_supadm = $supadm
+                usuari_supadm = $supadm,
+                usuari_passwor = '$claveEncript'
                 WHERE usuari_usuari = $id
             ";
 
