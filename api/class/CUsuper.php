@@ -25,7 +25,7 @@ class UsuarioPermiso extends Conexion
 
             $exec = $this->DBConsulta($sql);
 
-            if (count($exec) == 0) throw new Exception("No hay datos para mostrar", 1);
+            if (count($exec) == 0) throw new Exception("No hay datos para mostrar  $sql", 1);
 
             $items = array();
 
@@ -170,7 +170,7 @@ class UsuarioPermiso extends Conexion
             $apellidos = utf8_decode(trim($data['usuari_apeusu']));
             $correo = (trim($data['usuari_correo']));
             $compan = intval(trim($data['usuari_compan']));
-            $supadm = intval($data['usuari_supadm']);
+            $supadm = intval($data['usuari_supadm'] == "S" ? 1 : 0);
 
             if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) throw new Exception("El formateo de correo no es válido", 1);
 
@@ -196,6 +196,14 @@ class UsuarioPermiso extends Conexion
             if (count($exec) == 0) throw new Exception("Error al obtener el usuario", 1);
 
             $item = $exec[0];
+
+            $idusuario = $item->usuari_usuari;
+
+            $associar = "INSERT INTO tb_usuemp (usuemp_usuario, usuemp_compan) VALUES ($idusuario, $compan)";
+
+            $guardarAsociar = $this->DBConsulta($associar, true);
+
+            if (!$guardarAsociar) throw new Exception("Error al asociar el usuario", 1);
 
             $item->usuari_correo = utf8_encode($item->usuari_correo);
             $item->usuari_nomusu = utf8_encode($item->usuari_nomusu);

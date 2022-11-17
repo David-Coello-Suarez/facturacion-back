@@ -247,7 +247,7 @@ class Facturacion extends Conexion
                 FROM tb_facweb 
                 WHERE facweb_compan = $codEmpresa
                 AND FACWEB_TIPDOC = '$tipo_documento'
-                AND facweb_facfech BETWEEN '$fechaInicio' AND '$fechaFin'";
+                AND facweb_facfech BETWEEN '11/13/2022' AND '11/15/2022'";
 
             $exec = $this->DBConsulta($sqlFac);
 
