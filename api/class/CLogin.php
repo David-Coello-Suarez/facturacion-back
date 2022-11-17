@@ -13,14 +13,14 @@ class Login extends Conexion
     public function Login($data)
     {
         try {
-            $usuario = trim($data['usuario']);
-            $contrasena = trim($data['contrasena']);
+            $usuario = strtoupper(trim($data['usuario']));
+            $contrasena = strtoupper(trim($data['contrasena']));
 
-            $sql = "SELECT * FROM tb_usuari WHERE usuari_cedula = '$usuario'";
+            $sql = "SELECT * FROM tb_usuari WHERE usuari_codusu = '$usuario'";
 
             $exec = $this->DBConsulta($sql);
 
-            if (count($exec) == 0) throw new Exception("Usuario - contraseña incorrectos", 1);
+            if (count($exec) == 0) throw new Exception("Usuario - contraseña incorrectos 1", 1);
 
             $item = $exec[0];
 

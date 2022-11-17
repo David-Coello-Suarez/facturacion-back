@@ -103,17 +103,19 @@ class UsuarioPermiso extends Conexion
             if (!isset($data['usuari_apeusu'])) throw new Exception("Debe establecer los apellidos", 1);
             if (!isset($data['usuari_correo'])) throw new Exception("Debe establecer el correo eléctronico", 1);
             if (!isset($data['usuari_supadm'])) throw new Exception("Debe establecer el rol del usuario", 1);
+            if (!isset($data['usuari_codusu'])) throw new Exception("Debe establecer el nombre de usuario", 1);
 
             $id = intval(trim($data['usuari_usuari']));
             $cedula = (trim($data['usuari_cedula']));
-            $nombres = utf8_decode(trim($data['usuari_nomusu']));
-            $apellidos = utf8_decode(trim($data['usuari_apeusu']));
-            $correo = (trim($data['usuari_correo']));
-            $supadm = intval($data['usuari_supadm']);
+            $nombres = strtoupper(utf8_decode(trim($data['usuari_nomusu'])));
+            $apellidos = strtoupper(utf8_decode(trim($data['usuari_apeusu'])));
+            $correo = strtoupper((trim($data['usuari_correo'])));
+            $supadm = intval($data['usuari_supadm'] == "S" ? 1 : 0);
+            $codusu = trim($data['usuari_codusu']);
 
             if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) throw new Exception("El formateo de correo no es válido", 1);
 
-            $claveEncript = sha1($cedula . "-" . KEYPASS);
+            $claveEncript = sha1($codusu . "-" . KEYPASS);
 
             $update = "UPDATE tb_usuari SET 
                 usuari_cedula = '$cedula',
@@ -121,13 +123,14 @@ class UsuarioPermiso extends Conexion
                 usuari_apeusu = '$apellidos',
                 usuari_correo = '$correo',
                 usuari_supadm = $supadm,
-                usuari_passwor = '$claveEncript'
+                usuari_passwor = '$claveEncript',
+                usuari_codusu = '$codusu'
                 WHERE usuari_usuari = $id
             ";
 
             $exec = $this->DBConsulta($update, true);
 
-            if (!$exec) throw new Exception("Error al actualizar " . $update, 1);
+            if (!$exec) throw new Exception("Error al actualizar ", 1);
 
             $sql = "SELECT * FROM tb_usuari WHERE usuari_usuari = $id";
 
@@ -164,13 +167,15 @@ class UsuarioPermiso extends Conexion
             if (!isset($data['usuari_correo'])) throw new Exception("Debe establecer el correo eléctronico", 1);
             if (!isset($data['usuari_compan'])) throw new Exception("Debe establecer la empresa", 1);
             if (!isset($data['usuari_supadm'])) throw new Exception("Debe establecer el rol del usuario", 1);
+            if (!isset($data['usuari_codusu'])) throw new Exception("Debe establecer el nombre de usuario", 1);
 
             $cedula = (trim($data['usuari_cedula']));
-            $nombres = utf8_decode(trim($data['usuari_nomusu']));
-            $apellidos = utf8_decode(trim($data['usuari_apeusu']));
-            $correo = (trim($data['usuari_correo']));
+            $nombres = strtoupper(utf8_decode(trim($data['usuari_nomusu'])));
+            $apellidos = strtoupper(utf8_decode(trim($data['usuari_apeusu'])));
+            $correo = strtoupper(trim($data['usuari_correo']));
             $compan = intval(trim($data['usuari_compan']));
             $supadm = intval($data['usuari_supadm'] == "S" ? 1 : 0);
+            $codusu = strtoupper(trim($data['usuari_codusu']));
 
             if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) throw new Exception("El formateo de correo no es válido", 1);
 
@@ -180,10 +185,10 @@ class UsuarioPermiso extends Conexion
 
             if (count($exec) > 0) throw new Exception("Ya existe usuario con ese documento de identidad", 1);
 
-            $password = sha1($cedula . "-" . KEYPASS);
+            $password = sha1($codusu . "-" . KEYPASS);
 
             $insert = "INSERT INTO tb_usuari (usuari_compan, usuari_cedula, usuari_correo, usuari_nomusu, usuari_apeusu, usuari_passwor, usuari_codusu, usuari_clausu, usuari_estusu, usuari_supadm)
-                                    VALUES ($compan, '$cedula', '$correo', '$nombres', '$apellidos', '$password', '', '', '1', $supadm )";
+                                    VALUES ($compan, '$cedula', '$correo', '$nombres', '$apellidos', '$password', '$codusu', '', '1', $supadm )";
 
             $exec = $this->DBConsulta($insert, true);
 
