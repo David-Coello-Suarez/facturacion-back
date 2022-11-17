@@ -1,17 +1,6 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
-header("Access-Control-Allow-Origin: *");
-header('Access-Control-Allow-Methods: GET, POST');
-header("Access-Control-Allow-Headers: *");
-
-header("Content-Type: application/json; charset=UTF-8");
-
-require_once "../util/system/Funciones.php";
-
-$data = json_decode(file_get_contents("php://input"), true);
+require_once "ConfigCab.php";
 
 if (isset($data['metodo'])) {
 
@@ -29,6 +18,9 @@ if (isset($data['metodo'])) {
     switch ($metodo) {
         case 'GUARDAR_FACTURA':
             return print_r(json_encode($facturacion->GuardarFactura($data)));
+
+        case 'REPORTE_FACTURA':
+            return print_r(json_encode($facturacion->ListarFactura($data)));
 
         default:
             return print_r(json_encode(Funciones::RespuestaJson(2, "Metodo no encontrado")));

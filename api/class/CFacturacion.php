@@ -224,4 +224,96 @@ class Facturacion extends Conexion
             return Funciones::RespuestaJson(2, $mensaje);
         }
     }
+
+    public function ListarFactura($data)
+    {
+        try {
+            if (!isset($data['empresa'])) throw new Exception("Debe establecer la empresa", 1);
+            if (!isset($data['tipo_documento'])) throw new Exception("Debe establecer el tipo de documento", 1);
+
+            $codEmpresa  = isset($data['empresa']) ? intval($data['empresa']) : 0;
+            $tipo_documento = isset($data['tipo_documento']) ? $data['tipo_documento']: 'F';
+
+            $fechaInicio = isset($data['fechaI']) ? date("m/d/Y", strtotime($data['fechaI'])) : date("m/d/Y");
+            $fechaFin = isset($data['fechaF']) ? date("m/d/Y", strtotime($data['fechaF'])) : date("m/d/Y");
+
+            $sql = "SELECT * FROM TB_COMPAN WHERE COMPAN_COMPAN = $codEmpresa";
+
+            $exec = $this->DBConsulta($sql);
+
+            if (count($exec) == 0) throw new Exception("No existe la empresa", 1);
+
+            $sqlFac = "SELECT ( SELECT CLIENT_NOMBRE FROM tb_client WHERE client_client = facweb_client ) cliente,  facweb_facweb, facweb_numfac, facweb_numncr, facweb_facfech, facweb_subtot, facweb_valiva, facweb_totfac 
+                FROM tb_facweb 
+                WHERE facweb_compan = $codEmpresa
+                AND FACWEB_TIPDOC = '$tipo_documento'
+                AND facweb_facfech BETWEEN '$fechaInicio' AND '$fechaFin'";
+
+            $exec = $this->DBConsulta($sqlFac);
+
+            if (count($exec) == 0) throw new Exception("No hay datos para mostrar", 1);
+
+            $subTot = 0;
+            $valIva = 0;
+            $valTot = 0;
+            $items = array();
+            $idFacturas = array();
+
+            foreach ($exec as $item) {
+                $item->cliente = utf8_decode($item->cliente);
+
+                $item->facweb_subtot = number_format($item->facweb_subtot, 2, ',', '.');
+                $item->facweb_valiva = number_format($item->facweb_valiva, 2, ',', '.');
+                $item->facweb_totfac = number_format($item->facweb_totfac, 2, ',', '.');
+
+                $subTot += number_format($item->facweb_subtot, 2, ',', '.');
+                $valIva += number_format($item->facweb_valiva, 2, ',', '.');
+                $valTot += number_format($item->facweb_totfac, 2, ',', '.');
+
+                $item->itemFac = "//" . $_SERVER['SERVER_NAME'] . ":" . $_SERVER['SERVER_PORT'] . "/api/factura.php?idFactura=" . $item->facweb_facweb;
+
+                if (!in_array(intval($item->facweb_facweb), $idFacturas)) {
+                    $idFacturas[] = $item->facweb_facweb;
+                }
+
+                $items[] = $item;
+            }
+
+            $reporFac['subtotal'] = number_format($subTot, 2, ',', '.');
+            $reporFac['valoriva'] = number_format($valIva, 2, ',', '.');
+            $reporFac['TotalFac'] = number_format($valTot, 2, ',', '.');
+            $reporFac['facturas'] = $items;
+
+            $sqlFormasPago = "SELECT PAGWEB_FORPAG, PAGWEB_DESCRI, SUM(PAGWEB_VALPAG) TOTAL FROM tb_pagweb WHERE pagweb_facweb IN (" . implode(',', $idFacturas) . ") GROUP BY PAGWEB_FORPAG, PAGWEB_DESCRI";
+
+            $execFormasPago = $this->DBConsulta($sqlFormasPago);
+
+            $itemsFormasPago = array();
+
+            if (count($execFormasPago) > 0) {
+
+                foreach ($execFormasPago as $item) {
+
+                    $item->total = number_format($item->total, 2, ',', '.');
+
+                    $itemsFormasPago[] = $item;
+                }
+            }
+
+            $reporFac['formasPago'] = $itemsFormasPago;
+
+            return Funciones::RespuestaJson(1, "", array("detalleFactura", $reporFac));
+        } catch (Exception $e) {
+
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+
+                $mensaje = "Error interno del servidor";
+            }
+
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
 }
