@@ -26,11 +26,17 @@ $tmpname = $archivo['tmp_name'];
 $extension = explode(".", $name);
 $extension = $extension[count($extension) - 1];
 
-$extenciones = array("p12", 'png', 'jpg', 'jpeg');
+$extenciones = array();
+
+if (isset($_FILES['compan_firma'])) {
+    $extenciones = array('jks', 'p12');
+} else if (isset($_FILES['sucurs_logsuc'])) {
+    $extenciones = array("p12", 'png', 'jpg', 'jpeg');
+}
 
 $ruta = "/tempfile/";
 
-if (!in_array($extension, $extenciones)) return print_r(json_encode(Funciones::RespuestaJson(1, "Formato de extención no permitida")));
+if (!in_array($extension, $extenciones)) return print_r(json_encode(Funciones::RespuestaJson(1, "Formato de extención no permitida", $archivo)));
 
 if (!file_exists($ruta)) mkdir($ruta, 0777, true);
 
