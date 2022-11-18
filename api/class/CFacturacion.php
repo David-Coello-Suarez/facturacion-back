@@ -232,7 +232,7 @@ class Facturacion extends Conexion
             if (!isset($data['tipo_documento'])) throw new Exception("Debe establecer el tipo de documento", 1);
 
             $codEmpresa  = isset($data['empresa']) ? intval($data['empresa']) : 0;
-            $tipo_documento = isset($data['tipo_documento']) ? $data['tipo_documento']: 'F';
+            $tipo_documento = isset($data['tipo_documento']) ? $data['tipo_documento'] : 'F';
 
             $fechaInicio = isset($data['fechaI']) ? date("m/d/Y", strtotime($data['fechaI'])) : date("m/d/Y");
             $fechaFin = isset($data['fechaF']) ? date("m/d/Y", strtotime($data['fechaF'])) : date("m/d/Y");
@@ -247,7 +247,7 @@ class Facturacion extends Conexion
                 FROM tb_facweb 
                 WHERE facweb_compan = $codEmpresa
                 AND FACWEB_TIPDOC = '$tipo_documento'
-                AND facweb_facfech BETWEEN '11/13/2022' AND '11/15/2022'";
+                AND facweb_facfech BETWEEN '$fechaInicio' AND '$fechaFin'";
 
             $exec = $this->DBConsulta($sqlFac);
 
@@ -262,13 +262,13 @@ class Facturacion extends Conexion
             foreach ($exec as $item) {
                 $item->cliente = utf8_decode($item->cliente);
 
+                $subTot += ($item->facweb_subtot);
+                $valIva += ($item->facweb_valiva);
+                $valTot += ($item->facweb_totfac);
+                
                 $item->facweb_subtot = number_format($item->facweb_subtot, 2, ',', '.');
                 $item->facweb_valiva = number_format($item->facweb_valiva, 2, ',', '.');
                 $item->facweb_totfac = number_format($item->facweb_totfac, 2, ',', '.');
-
-                $subTot += number_format($item->facweb_subtot, 2, ',', '.');
-                $valIva += number_format($item->facweb_valiva, 2, ',', '.');
-                $valTot += number_format($item->facweb_totfac, 2, ',', '.');
 
                 $item->itemFac = "//" . $_SERVER['SERVER_NAME'] . ":" . $_SERVER['SERVER_PORT'] . "/api/factura.php?idFactura=" . $item->facweb_facweb;
 
@@ -302,7 +302,7 @@ class Facturacion extends Conexion
 
             $reporFac['formasPago'] = $itemsFormasPago;
 
-            return Funciones::RespuestaJson(1, "", array("detalleFactura", $reporFac));
+            return Funciones::RespuestaJson(1, "", array("detalleFactura" => $reporFac));
         } catch (Exception $e) {
 
             $mensaje = $e->getMessage();
