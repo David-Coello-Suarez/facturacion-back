@@ -19,7 +19,7 @@ if (isset($_FILES['compan_firma'])) {
     $archivo = $_FILES['sucurs_logsuc'];
 }
 
-$name = uniqid() . $archivo['name'];
+$name = $archivo['name'];
 $tipo = $archivo['type'];
 $tmpname = $archivo['tmp_name'];
 

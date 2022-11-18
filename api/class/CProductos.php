@@ -56,7 +56,7 @@ class Producto  extends Conexion
             $nombre = strtolower(trim($data['nombre']));
 
             $empresa = intval($data['compania']);
-            $sucursal = intval($data['sucursal']);
+            $i = intval($data['i']);
 
             $sqlWhere = "";
 
