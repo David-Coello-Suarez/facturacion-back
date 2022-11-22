@@ -112,10 +112,11 @@ class UsuarioPermiso extends Conexion
             $correo = strtoupper((trim($data['usuari_correo'])));
             $supadm = intval($data['usuari_supadm'] == "S" ? 1 : 0);
             $codusu = trim($data['usuari_codusu']);
+            $passwor = strtoupper((trim($data['usuari_passwor'])));
 
             if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) throw new Exception("El formateo de correo no es válido", 1);
 
-            $claveEncript = sha1($codusu . "-" . KEYPASS);
+            $claveEncript = sha1($passwor . "-" . KEYPASS);
 
             $update = "UPDATE tb_usuari SET 
                 usuari_cedula = '$cedula',
@@ -168,6 +169,8 @@ class UsuarioPermiso extends Conexion
             if (!isset($data['usuari_compan'])) throw new Exception("Debe establecer la empresa", 1);
             if (!isset($data['usuari_supadm'])) throw new Exception("Debe establecer el rol del usuario", 1);
             if (!isset($data['usuari_codusu'])) throw new Exception("Debe establecer el nombre de usuario", 1);
+            if (!isset($data['usuari_passwor'])) throw new Exception("Debe establecer el nombre de usuario", 1);
+
 
             $cedula = (trim($data['usuari_cedula']));
             $nombres = strtoupper(utf8_decode(trim($data['usuari_nomusu'])));
@@ -176,6 +179,7 @@ class UsuarioPermiso extends Conexion
             $compan = intval(trim($data['usuari_compan']));
             $supadm = intval($data['usuari_supadm'] == "S" ? 1 : 0);
             $codusu = strtoupper(trim($data['usuari_codusu']));
+            $passwor = strtoupper(trim($data['usuari_passwor']));
 
             if (!filter_var($correo, FILTER_VALIDATE_EMAIL)) throw new Exception("El formateo de correo no es válido", 1);
 
@@ -185,7 +189,7 @@ class UsuarioPermiso extends Conexion
 
             if (count($exec) > 0) throw new Exception("Ya existe usuario con ese documento de identidad", 1);
 
-            $password = sha1($codusu . "-" . KEYPASS);
+            $password = sha1($passwor . "-" . KEYPASS);
 
             $insert = "INSERT INTO tb_usuari (usuari_compan, usuari_cedula, usuari_correo, usuari_nomusu, usuari_apeusu, usuari_passwor, usuari_codusu, usuari_clausu, usuari_estusu, usuari_supadm)
                                     VALUES ($compan, '$cedula', '$correo', '$nombres', '$apellidos', '$password', '$codusu', '', '1', $supadm )";
@@ -333,7 +337,7 @@ class UsuarioPermiso extends Conexion
             $sqlTot = "SELECT * FROM TB_USUEMP WHERE usuemp_usuario = $usuario";
 
             $execTot = $this->DBConsulta($sqlTot);
-
+            
             if (count($execTot) > 0) {
 
                 $sql = "DELETE FROM TB_USUEMP WHERE usuemp_usuario = $usuario";
@@ -342,7 +346,7 @@ class UsuarioPermiso extends Conexion
 
                 if (!$exec) throw new Exception("Error al procesar las companias", 1);
             }
-
+            
             $tot = 0;
 
             foreach ($compans as $item) {
@@ -359,7 +363,7 @@ class UsuarioPermiso extends Conexion
 
             if ($tot != count($compans)) throw new Exception("Error al asignar las companias", 1);
 
-            return Funciones::RespuestaJson(1, "Asignados con éxito");
+            return Funciones::RespuestaJson(1, "Asignados con éxito $tot", array($compans));
         } catch (Exception $e) {
 
             $mensaje = $e->getMessage();

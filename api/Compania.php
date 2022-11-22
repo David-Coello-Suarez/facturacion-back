@@ -40,7 +40,7 @@ if (isset($data['metodo'])) {
         $data['usuemp_compan'] = $usuario;
         $data['usuemp_supadm'] = $tipoUsuario;
     }
-
+    // return print_r(json_encode(Funciones::RespuestaJson(2, "", $data)));
     switch ($metodo) {
 
         case 'LISTAR_COMPANIA':

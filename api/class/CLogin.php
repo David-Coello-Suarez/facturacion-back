@@ -38,7 +38,7 @@ class Login extends Conexion
 
             $token = md5(uniqid(mt_rand(), true)) . "." . $has;
 
-            $sql = "UPDATE tb_usuari SET usuari_tokens = '$token' WHERE usuari_cedula = '$usuario'";
+            $sql = "UPDATE tb_usuari SET usuari_tokens = '$token' WHERE usuari_usuari = '$item->usuari_usuari'";
 
             $exec = $this->DBConsulta($sql, true);
 
