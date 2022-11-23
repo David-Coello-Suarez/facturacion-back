@@ -129,7 +129,7 @@ require_once "../config.php";
             <div class="col-7">
 
                 <div class="card border-0">
-                    
+
                     <img src="LeerImg.php?image=<?php echo $sucur->sucurs_logsuc; ?>" alt="logo" width="200" height="150" class="card-img-top">
 
                     <div class="card-body">
@@ -324,7 +324,42 @@ require_once "../config.php";
                     <tfoot>
                         <tr>
                             <td colspan="4" rowspan="15">
+                                <div class="row">
+                                    <div class="col-6">
 
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td class="text-center">
+                                                        Forma pago
+                                                    </td>
+                                                    <td class="text-center">
+                                                        Valor ($)
+                                                    </td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php
+                                                $sqlFormasPago = "SELECT * FROM TB_PAGWEB WHERE PAGWEB_FACWEB = " . intval($_GET['idFactura']);
+
+                                                $execForPag = $conexion->DBConsulta($sqlFormasPago);
+
+                                                $fila = "";
+
+                                                foreach ($execForPag as $item) {
+                                                    $nombre = $item->pagweb_descri;
+                                                    $valor  = number_format($item->pagweb_valpag, 2);
+
+                                                    $fila .= " <tr > <td class='text-center'>$nombre</td> <td class='text-center'>$valor</td> </tr> ";
+                                                }
+
+                                                echo $fila;
+                                                ?>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -419,13 +454,13 @@ require_once "../config.php";
     </div>
 
     <script>
-        window.onload = function() {
-            window.print()
+        // window.onload = function() {
+        //     window.print()
 
-            setTimeout(function() {
-                window.close();
-            }, 100);
-        }
+        //     setTimeout(function() {
+        //         window.close();
+        //     }, 100);
+        // }
     </script>
 
 
