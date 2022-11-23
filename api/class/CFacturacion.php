@@ -83,11 +83,12 @@ class Facturacion extends Conexion
             $observacion = utf8_encode(trim($data['observacion']));
             $porcDsct = intval($data['descuento']);
             $valDsct = $data['valDesc'];
+            $obsFac = utf8_encode(trim($data['facweb_obsfac']));
 
             // GUARDAR CABECERA DE FACTURA
             // $fecha = date("d/n/Y");
-            $sql = "INSERT INTO tb_facweb ( facweb_descue, facweb_valdesc, facweb_facfech, facweb_client, facweb_observ, facweb_subtot, facweb_valiva, facweb_totfac, facweb_compan, facweb_sucurs, facweb_tipdoc)
-                                    VALUES( $porcDsct, '$valDsct', '$fechaFac', $id, '$observacion', '$subtotal', '$iva', '" . ($total - $valDsct) . "', '$codEmpresa', $sucursal, '$tipoDocumento')";
+            $sql = "INSERT INTO tb_facweb (facweb_obsfac, facweb_descue, facweb_valdesc, facweb_facfech, facweb_client, facweb_observ, facweb_subtot, facweb_valiva, facweb_totfac, facweb_compan, facweb_sucurs, facweb_tipdoc)
+                                    VALUES( '$obsFac', $porcDsct, '$valDsct', '$fechaFac', $id, '$observacion', '$subtotal', '$iva', '" . ($total - $valDsct) . "', '$codEmpresa', $sucursal, '$tipoDocumento')";
 
             $exec = $this->DBConsulta($sql, TRUE);
 
