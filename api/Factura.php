@@ -130,7 +130,7 @@ require_once "../config.php";
 
                 <div class="card border-0">
                     
-                    <img src="LeerImg.php?image=<?php echo $sucur->sucurs_logsuc; ?>" alt="logo" style="width: 100px;" class="card-img-top">
+                    <img src="LeerImg.php?image=<?php echo $sucur->sucurs_logsuc; ?>" alt="logo" width="200" height="150" class="card-img-top">
 
                     <div class="card-body">
                         <div class="border border-dark rounded row">
@@ -160,7 +160,7 @@ require_once "../config.php";
                 </div>
 
             </div>
-            <div class="col" style=" margin-top: 8.6rem;">
+            <div class="col" style="margin-top: 10.3rem;">
                 <div class="border border-dark rounded row">
                     <div class="col-12 datos">R.U.C.: <?php print_r($empresa->compan_docume) ?></div>
                     <div class="col-12 datos"><?php echo strtoupper($item->facweb_tipdoc) == 'F' ? 'FACTURA' : 'NOTA DE CREDITO'  ?></div>
