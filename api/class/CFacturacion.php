@@ -17,7 +17,9 @@ class Facturacion extends Conexion
             // return Funciones::RespuestaJson(2, "", $data);
             // && (trim($data['client_cedula']) === "0999999999999" || trim($data['client_cedula']) === "0999999999") && ((strlen(trim($data['client_cedula'])) === 13 || strlen(trim($data['client_cedula']))) === 10)
 
-            if (floatval($data['total']) > 50 && (trim($data['client_cedula']) === "9999999999999" || trim($data['client_cedula']) === "0999999999")) return Funciones::RespuestaJson(2, "No debe superar los $200 en consumidor final");
+            $numValor = 50;
+
+            if (floatval($data['total']) > $numValor && (trim($data['client_cedula']) === "9999999999999" || trim($data['client_cedula']) === "0999999999")) return Funciones::RespuestaJson(2, "No debe superar los $$numValor en consumidor final");
 
             // return Funciones::RespuestaJson(9, "", $data);
 
@@ -87,8 +89,8 @@ class Facturacion extends Conexion
 
             // GUARDAR CABECERA DE FACTURA
             // $fecha = date("d/n/Y");
-            $sql = "INSERT INTO tb_facweb (facweb_obsfac, facweb_descue, facweb_valdesc, facweb_facfech, facweb_client, facweb_observ, facweb_subtot, facweb_valiva, facweb_totfac, facweb_compan, facweb_sucurs, facweb_tipdoc)
-                                    VALUES( '$obsFac', $porcDsct, '$valDsct', '$fechaFac', $id, '$observacion', '$subtotal', '$iva', '" . ($total - $valDsct) . "', '$codEmpresa', $sucursal, '$tipoDocumento')";
+            $sql = "INSERT INTO tb_facweb (facweb_obsfac, facweb_descue, facweb_valdesc, facweb_facfech, facweb_client, facweb_observ, facweb_subtot,                   facweb_valiva, facweb_totfac,     facweb_compan, facweb_sucurs, facweb_tipdoc)
+                                    VALUES( '$obsFac',     $porcDsct,    '$valDsct',     '$fechaFac',              $id, '$observacion',  '".($subtotal+$valDsct)."',        '$iva', '" . ($total) . "', '$codEmpresa', $sucursal,     '$tipoDocumento')";
 
             $exec = $this->DBConsulta($sql, TRUE);
 
@@ -105,6 +107,7 @@ class Facturacion extends Conexion
 
             $detallePedido = $data['productos'];
             $i = 0;
+            $totalFac = 0;
 
             foreach ($detallePedido as $item) {
                 $idProduc = intval($item['produc_produc']);
@@ -114,6 +117,7 @@ class Facturacion extends Conexion
                 $iva = intval($item['produc_poriva']);
                 $codigo = $item['produc_codigo'];
                 $observacion = isset($item['produc_observ']) ? utf8_decode($item['produc_observ']) : "";
+                $totalFac += floatval($data['produc_precio']);
 
                 $valorIva = $iva / 100;
                 $ivaTotal = $precio * $valorIva;
