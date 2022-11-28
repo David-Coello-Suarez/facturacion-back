@@ -441,7 +441,7 @@ require_once "../config.php";
                             <td class="sumatoria">
                                 $
                                 <?php
-                                $total = ($subtot + $factura->facweb_valiva + $subIva0 + $subjetoIva + $descIce + $propina) - $factura->facweb_valdesc;
+                                $total = ($factura->facweb_totfac ) ;
 
                                 print_r(number_format($total, 2));
                                 ?>
