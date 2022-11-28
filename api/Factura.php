@@ -216,7 +216,15 @@ require_once "../config.php";
         </div>
 
         <div class="row ms-1 mt-2">
-            <div class="col ps-0 pe-0">
+            <div class="col-12 datos">
+                <?php
+                if (strlen($item->facweb_obsfac) > 0) {
+                    echo "<strong>Observación</strong> <br />";
+                    echo $item->facweb_obsfac;
+                }
+                ?>
+            </div>
+            <div class="col-12 ps-0 pe-0">
                 <?php
 
                 $sql = "SELECT * FROM tb_detfac WHERE detfac_facweb = $id";
@@ -441,7 +449,7 @@ require_once "../config.php";
                             <td class="sumatoria">
                                 $
                                 <?php
-                                $total = ($factura->facweb_totfac ) ;
+                                $total = ($factura->facweb_totfac);
 
                                 print_r(number_format($total, 2));
                                 ?>
