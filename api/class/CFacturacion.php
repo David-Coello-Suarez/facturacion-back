@@ -24,8 +24,8 @@ class Facturacion extends Conexion
             // return Funciones::RespuestaJson(9, "", $data);
 
             $id = 0;
-            $codEmpresa  = isset($data['empresa']) ? intval($data['empresa']) : 0;
-            $sucursal  = isset($data['sucursal']) ? intval($data['sucursal']) : 0;
+            $codEmpresa = isset($data['empresa']) ? intval($data['empresa']) : 0;
+            $sucursal = isset($data['sucursal']) ? intval($data['sucursal']) : 0;
             $tipoDocumento  = isset($data['tipoDoc']) ? ($data['tipoDoc']) : "";
             $fechaFac = date("m/d/Y", strtotime(trim($data['fechaFac'])));
 
@@ -122,8 +122,8 @@ class Facturacion extends Conexion
                 $valorIva = $iva / 100;
                 $ivaTotal = $precio * $valorIva;
 
-                $sqlGuardar = "INSERT INTO tb_detfac (detfac_facweb, detfac_produc, detfac_nombre, detfac_cantid, detfac_precio, detfac_valiva, detfac_valtot, detfac_codigo, detfac_detalle)
-                                            VALUES ($idFactura, $idProduc, '$nombre', $cantidad, '$precio', '$ivaTotal', '" . ($precio + $ivaTotal) . "', '$codigo', '$observacion')";
+                $sqlGuardar = "INSERT INTO tb_detfac ( detfac_compan, detfac_sucurs, detfac_facweb, detfac_produc, detfac_nombre, detfac_cantid, detfac_precio, detfac_valiva, detfac_valtot, detfac_codigo, detfac_detalle)
+                                            VALUES (  $codEmpresa, $sucursal, $idFactura, $idProduc, '$nombre', $cantidad, '$precio', '$ivaTotal', '" . ($precio + $ivaTotal) . "', '$codigo', '$observacion')";
 
                 $exec =  $this->DBConsulta($sqlGuardar, true);
 
@@ -142,8 +142,8 @@ class Facturacion extends Conexion
                 $nombre = utf8_decode(trim($item['forpag_nombre']));
                 $pago = number_format(trim(str_replace(",", "", $item['forpag_valtot'])), 2);
 
-                $sqlGuardar = "INSERT INTO tb_pagweb (pagweb_facweb, pagweb_forPag, pagweb_descri, pagweb_valPag)
-                                                    VALUES ($idFactura, '$tipo', '$nombre', '$pago')";
+                $sqlGuardar = "INSERT INTO tb_pagweb ( pagweb_compan, pagweb_sucurs, pagweb_facweb, pagweb_forPag, pagweb_descri, pagweb_valPag)
+                                                    VALUES ( $codEmpresa, $sucursal, $idFactura, '$tipo', '$nombre', '$pago')";
 
                 $exec = $this->DBConsulta($sqlGuardar, true);
 
