@@ -85,7 +85,7 @@ class Facturacion extends Conexion
             $observacion = utf8_encode(trim($data['observacion']));
             $porcDsct = intval($data['descuento']);
             $valDsct = $data['valDesc'];
-            $obsFac = utf8_encode(trim($data['observacionFac']));
+            $obsFac = utf8_decode(trim($data['observacionFac']));
 
             // GUARDAR CABECERA DE FACTURA
             // $fecha = date("d/n/Y");
