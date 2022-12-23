@@ -13,6 +13,7 @@ class Facturacion extends Conexion
     public function GuardarFactura($data)
     {
 
+        // return Funciones::RespuestaJson(4, "", $data);
         try {
             // return Funciones::RespuestaJson(2, "", $data);
             // && (trim($data['client_cedula']) === "0999999999999" || trim($data['client_cedula']) === "0999999999") && ((strlen(trim($data['client_cedula'])) === 13 || strlen(trim($data['client_cedula']))) === 10)
@@ -90,7 +91,7 @@ class Facturacion extends Conexion
             // GUARDAR CABECERA DE FACTURA
             // $fecha = date("d/n/Y");
             $sql = "INSERT INTO tb_facweb (facweb_obsfac, facweb_descue, facweb_valdesc, facweb_facfech, facweb_client, facweb_observ, facweb_subtot,                   facweb_valiva, facweb_totfac,     facweb_compan, facweb_sucurs, facweb_tipdoc)
-                                    VALUES( '$obsFac',     $porcDsct,    '$valDsct',     '$fechaFac',              $id, '$observacion',  '".($subtotal+$valDsct)."',        '$iva', '" . ($total) . "', '$codEmpresa', $sucursal,     '$tipoDocumento')";
+                                    VALUES( '$obsFac',     $porcDsct,    '$valDsct',     '$fechaFac',              $id, '$observacion',  '" . ($subtotal + $valDsct) . "',        '$iva', '" . ($total) . "', '$codEmpresa', $sucursal,     '$tipoDocumento')";
 
             $exec = $this->DBConsulta($sql, TRUE);
 
@@ -117,7 +118,7 @@ class Facturacion extends Conexion
                 $iva = intval($item['produc_poriva']);
                 $codigo = $item['produc_codigo'];
                 $observacion = isset($item['produc_observ']) ? utf8_decode($item['produc_observ']) : "";
-                $totalFac += floatval($data['produc_precio']);
+                $totalFac += floatval($item['produc_precio']);
 
                 $valorIva = $iva / 100;
                 $ivaTotal = $precio * $valorIva;
@@ -201,7 +202,15 @@ class Facturacion extends Conexion
             $cadena = date("dmY") . "-$ambiente-$ruc-2-$numero_documento-123456781";
             $numeroAutorizacion = Funciones::GenerarAutorizacion($cadena);
             $cadena = (string)str_replace("-", "",  $cadena) . $numeroAutorizacion;
-            $sql = "UPDATE tb_facweb SET $tipoDoc='$numero_documento', facweb_numaut = '$cadena' WHERE facweb_facweb = $idFactura";
+
+            $agregarfacDebit = "";
+
+            if(strtoupper(trim($tipoDocumento)) == "N"){
+                $numfac = trim($data['num_fac']);
+                $agregarfacDebit = "FACWEB_NUMFAC = '$numfac',";
+            }
+
+            $sql = "UPDATE tb_facweb SET $agregarfacDebit $tipoDoc='$numero_documento', facweb_numaut = '$cadena' WHERE facweb_facweb = $idFactura";
 
             $exec = $this->DBConsulta($sql, true);
 
@@ -270,7 +279,7 @@ class Facturacion extends Conexion
                 $subTot += ($item->facweb_subtot);
                 $valIva += ($item->facweb_valiva);
                 $valTot += ($item->facweb_totfac);
-                
+
                 $item->facweb_subtot = number_format($item->facweb_subtot, 2, ',', '.');
                 $item->facweb_valiva = number_format($item->facweb_valiva, 2, ',', '.');
                 $item->facweb_totfac = number_format($item->facweb_totfac, 2, ',', '.');
@@ -308,6 +317,38 @@ class Facturacion extends Conexion
             $reporFac['formasPago'] = $itemsFormasPago;
 
             return Funciones::RespuestaJson(1, "", array("detalleFactura" => $reporFac));
+        } catch (Exception $e) {
+
+            $mensaje = $e->getMessage();
+
+            if ($e->getCode() != 1) {
+                Funciones::escribirLogs(basename(__FILE__), $e);
+
+                $mensaje = "Error interno del servidor";
+            }
+
+            return Funciones::RespuestaJson(2, $mensaje);
+        }
+    }
+
+    public function ConsultarNumFac($data)
+    {
+        try {
+            if (!isset($data['compan'])) throw new Exception("Debe establecer la empresa", 1);
+            if (!isset($data['numfac'])) throw new Exception("Debe establecer el número de la factura", 1);
+
+            $compan = intval(trim($data['compan']));
+            $numfac = (trim($data['numfac']));
+
+            $sql = "SELECT * FROM tb_facweb WHERE facweb_compan = $compan and facweb_numfac = '$numfac' and facweb_tipdoc = 'F'";
+
+            $exec = $this->DBConsulta($sql);
+
+            if (count($exec) == 0) return Funciones::RespuestaJson(2, "No hay datos para mostrar", $sql);
+
+            $datas['numfac'] = $exec[0]->facweb_numfac;
+
+            return Funciones::RespuestaJson(1, "", $datas);
         } catch (Exception $e) {
 
             $mensaje = $e->getMessage();

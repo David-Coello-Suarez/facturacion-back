@@ -1,5 +1,9 @@
 <?php
 
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
+
 require_once "ConfigCab.php";
 
 if (isset($data['metodo'])) {
@@ -21,6 +25,9 @@ if (isset($data['metodo'])) {
 
         case 'REPORTE_FACTURA':
             return print_r(json_encode($facturacion->ListarFactura($data)));
+
+        case 'CONSULTAR_NUM_FAC':
+            return print_r(json_encode($facturacion->ConsultarNumFac($data)));
 
         default:
             return print_r(json_encode(Funciones::RespuestaJson(2, "Metodo no encontrado")));
