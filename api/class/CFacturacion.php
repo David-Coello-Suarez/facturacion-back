@@ -356,9 +356,58 @@ class Facturacion extends Conexion
 
             $exec = $this->DBConsulta($sql);
 
-            if (count($exec) == 0) return Funciones::RespuestaJson(2, "No hay datos para mostrar", $sql);
+            if (count($exec) == 0) return Funciones::RespuestaJson(2, "No hay datos para mostrar");
 
             $datas['numfac'] = $exec[0]->facweb_numfac;
+
+            $sqlCliente = "SELECT * 
+                FROM TB_CLIENT 
+                WHERE CLIENT_CLIENT = ( 
+                    SELECT FACWEB_CLIENT 
+                    FROM TB_FACWEB 
+                    WHERE FACWEB_COMPAN = $compan 
+                    AND FACWEB_NUMFAC = '$numfac' 
+                    AND FACWEB_TIPDOC = 'F'
+                )
+            ";
+
+            $execCliente = $this->DBConsulta($sqlCliente);
+
+            $cliente = $execCliente[0];
+
+            if ($cliente->client_cedula == '9999999999999') return Funciones::RespuestaJson(2, "No se puede hacer notas de crédito a consumidor final");
+
+            $datas['cliente'] = $cliente;
+
+            $sqlFac = "SELECT * 
+                FROM TB_DETFAC 
+                WHERE DETFAC_FACWEB = ( 
+                    SELECT FACWEB_FACWEB 
+                    FROM TB_FACWEB 
+                    WHERE FACWEB_COMPAN = $compan 
+                    AND FACWEB_NUMFAC = '$numfac' 
+                    AND FACWEB_TIPDOC = 'F'
+                )
+            ";
+
+            $execFactura = $this->DBConsulta($sqlFac);
+
+            $items = array();
+
+            foreach ($execFactura as $key => $item) {
+                $idproducto = intval($item->detfac_produc);
+
+                $sql = "SELECT * FROM TB_PRODUC WHERE PRODUC_PRODUC = $idproducto";
+
+                $execProduc = $this->DBConsulta($sql);
+
+                $factura = $execProduc[0];
+                $factura->produc_cantid = 1;
+
+                $items[] = $factura;
+            }
+
+            $datas['factura'] = $items;
 
             return Funciones::RespuestaJson(1, "", $datas);
         } catch (Exception $e) {
