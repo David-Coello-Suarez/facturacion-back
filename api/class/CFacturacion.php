@@ -205,7 +205,7 @@ class Facturacion extends Conexion
 
             $agregarfacDebit = "";
 
-            if(strtoupper(trim($tipoDocumento)) == "N"){
+            if (strtoupper(trim($tipoDocumento)) == "N") {
                 $numfac = trim($data['num_fac']);
                 $agregarfacDebit = "FACWEB_NUMFAC = '$numfac',";
             }
@@ -257,7 +257,7 @@ class Facturacion extends Conexion
 
             if (count($exec) == 0) throw new Exception("No existe la empresa", 1);
 
-            $sqlFac = "SELECT ( SELECT CLIENT_NOMBRE FROM tb_client WHERE client_client = facweb_client ) cliente,  facweb_facweb, facweb_numfac, facweb_numncr, facweb_facfech, facweb_subtot, facweb_valiva, facweb_totfac 
+            $sqlFac = "SELECT  ( SELECT CLIENT_NOMBRE FROM tb_client WHERE client_client = facweb_client ) cliente, facweb_descue, facweb_facweb, facweb_valdesc, facweb_numfac, facweb_numncr, facweb_facfech, facweb_subtot, facweb_valiva, facweb_totfac 
                 FROM tb_facweb 
                 WHERE facweb_compan = $codEmpresa
                 AND FACWEB_TIPDOC = '$tipo_documento'
@@ -280,9 +280,21 @@ class Facturacion extends Conexion
                 $valIva += ($item->facweb_valiva);
                 $valTot += ($item->facweb_totfac);
 
-                $item->facweb_subtot = number_format($item->facweb_subtot, 2, ',', '.');
-                $item->facweb_valiva = number_format($item->facweb_valiva, 2, ',', '.');
-                $item->facweb_totfac = number_format($item->facweb_totfac, 2, ',', '.');
+                $item->facweb_graiva =  number_format($item->facweb_subtot - ($item->facweb_subtot * (intval($item->facweb_descue) / 100)), 2);
+
+                $grabaIva = $item->facweb_subtot - ($item->facweb_subtot * (intval($item->facweb_descue) / 100));
+                $totFac = $item->facweb_totfac - $item->facweb_valiva;
+
+                $item->facweb_nograiva = number_format(($grabaIva - $totFac), 2);
+
+                $item->facweb_totfac =  $item->facweb_graiva +  $item->facweb_nograiva + $item->facweb_valiva;
+
+                $item->facweb_subtot = number_format($item->facweb_subtot, 2);
+                $item->facweb_valiva = number_format($item->facweb_valiva, 2);
+                $item->facweb_totfac = number_format($item->facweb_totfac, 2);
+                $item->facweb_valdesc = number_format($item->facweb_valdesc, 2);
+                $item->facweb_descue = intval($item->facweb_descue);
+
 
                 $item->itemFac = "//" . $_SERVER['SERVER_NAME'] . ":" . $_SERVER['SERVER_PORT'] . "/api/factura.php?idFactura=" . $item->facweb_facweb;
 
@@ -308,7 +320,7 @@ class Facturacion extends Conexion
 
                 foreach ($execFormasPago as $item) {
 
-                    $item->total = number_format($item->total, 2, ',', '.');
+                    $item->total = number_format($item->total, 2);
 
                     $itemsFormasPago[] = $item;
                 }
