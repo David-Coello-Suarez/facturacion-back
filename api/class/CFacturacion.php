@@ -280,19 +280,19 @@ class Facturacion extends Conexion
                 $valIva += ($item->facweb_valiva);
                 $valTot += ($item->facweb_totfac);
 
-                $item->facweb_graiva =  number_format($item->facweb_subtot - ($item->facweb_subtot * (intval($item->facweb_descue) / 100)), 2);
+                $item->facweb_graiva =  ($item->facweb_subtot - ($item->facweb_subtot * (intval($item->facweb_descue) / 100)));
 
                 $grabaIva = $item->facweb_subtot - ($item->facweb_subtot * (intval($item->facweb_descue) / 100));
                 $totFac = $item->facweb_totfac - $item->facweb_valiva;
 
-                $item->facweb_nograiva = number_format(($grabaIva - $totFac), 2);
+                $item->facweb_nograiva = (($grabaIva - $totFac));
 
-                $item->facweb_totfac =  $item->facweb_graiva +  $item->facweb_nograiva + $item->facweb_valiva;
+                $item->facweb_totfac =  floatval($item->facweb_graiva) +  floatval($item->facweb_nograiva) + floatval($item->facweb_valiva);
 
-                $item->facweb_subtot = number_format($item->facweb_subtot, 2);
-                $item->facweb_valiva = number_format($item->facweb_valiva, 2);
-                $item->facweb_totfac = number_format($item->facweb_totfac, 2);
-                $item->facweb_valdesc = number_format($item->facweb_valdesc, 2);
+                $item->facweb_subtot = ($item->facweb_subtot);
+                $item->facweb_valiva = ($item->facweb_valiva);
+                $item->facweb_totfac = ($item->facweb_totfac);
+                $item->facweb_valdesc = ($item->facweb_valdesc);
                 $item->facweb_descue = intval($item->facweb_descue);
 
 

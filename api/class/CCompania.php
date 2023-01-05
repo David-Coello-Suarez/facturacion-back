@@ -149,7 +149,7 @@ class Compania extends Conexion
 
             $this->DBConsulta($update, true);
 
-            
+
             // START CREAR Y GUARDAR SUCURSAL
 
             $sqlOrden = "SELECT MAX(sucurs_ordvis) as orden FROM tb_sucurs WHERE sucurs_compan = $item->compan_compan";
@@ -348,23 +348,24 @@ class Compania extends Conexion
 
             $items = array();
 
-            foreach ($exec as $item) {
+            foreach ($exec as $key => $item) {
 
                 $id = intval($item->compan_compan);
-
-                $item->sucurs_direcc = ($item->sucurs_direcc);
-                $item->sucurs_nombre = ($item->sucurs_nombre);
-                $item->sucurs_email = ($item->sucurs_email);
 
                 $sqlSucursal = "SELECT * FROM tb_sucurs WHERE sucurs_compan = $id";
 
                 $execSucurs = $this->DBConsulta($sqlSucursal);
 
-                if (count($execSucurs) > 0) {
-                    $item->compan_sucurs = $execSucurs;
 
-                    $items[] = $item;
+                if (count($execSucurs) >2) {
+
+                for ($i = 0; $i < count($execSucurs); $i++) {
+                    $item->compan_sucurs[] = $execSucurs[$i];
                 }
+            }else{
+                $item->compan_sucurs[] = $execSucurs[0];
+            }
+                $items[$key] = $item;
             }
 
             return Funciones::RespuestaJson(1, "", array("compansucurs" => $items));

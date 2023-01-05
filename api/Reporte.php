@@ -20,15 +20,17 @@ $conexion->DBConexion();
 $fechaI = $_GET['fechaI'];
 $fechaF = $_GET['fechaF'];
 $tipoDocumento = strtoupper($_GET['tipoDocumento']);
+$compan = intval($_GET['compan']);
 
 $sql = "SELECT ( SELECT CLIENT_NOMBRE FROM tb_client WHERE client_client = facweb_client ) cliente, facweb_descue, facweb_facweb, facweb_numfac, facweb_numncr, facweb_facfech, facweb_subtot, facweb_valiva, facweb_totfac 
 FROM TB_FACWEB 
 WHERE  FACWEB_TIPDOC = '$tipoDocumento'
+AND FACWEB_COMPAN = $compan
 AND FACWEB_FACFECH BETWEEN DATE('$fechaI') AND DATE('$fechaF')";
 
 $exec = $conexion->DBConsulta($sql);
 
-if (count($exec) == 0) die("NO HAY DATOS PARA MOSTRAR $sql");
+if (count($exec) == 0) die("NO HAY DATOS PARA MOSTRAR 1 $sql");
 
 require '../vendor/autoload.php';
 
