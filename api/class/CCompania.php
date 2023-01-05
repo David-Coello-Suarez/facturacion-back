@@ -352,9 +352,9 @@ class Compania extends Conexion
 
                 $id = intval($item->compan_compan);
 
-                $item->sucurs_direcc = utf8_encode($item->sucurs_direcc);
-                $item->sucurs_nombre = utf8_encode($item->sucurs_nombre);
-                $item->sucurs_email = utf8_encode($item->sucurs_email);
+                $item->sucurs_direcc = ($item->sucurs_direcc);
+                $item->sucurs_nombre = ($item->sucurs_nombre);
+                $item->sucurs_email = ($item->sucurs_email);
 
                 $sqlSucursal = "SELECT * FROM tb_sucurs WHERE sucurs_compan = $id";
 
