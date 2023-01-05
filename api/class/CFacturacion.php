@@ -114,7 +114,7 @@ class Facturacion extends Conexion
                 $idProduc = intval($item['produc_produc']);
                 $nombre = utf8_decode(trim($item['produc_nombre']));
                 $cantidad = intval($item['produc_cantid']);
-                $precio = number_format(str_replace(",", "", $item['produc_precio']), 2);
+                $precio = (str_replace(",", "", $item['produc_precio']));
                 $iva = intval($item['produc_poriva']);
                 $codigo = $item['produc_codigo'];
                 $observacion = isset($item['produc_observ']) ? utf8_decode($item['produc_observ']) : "";
