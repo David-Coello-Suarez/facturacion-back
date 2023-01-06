@@ -400,11 +400,17 @@ class Facturacion extends Conexion
                 $sql = "SELECT * FROM TB_PRODUC WHERE PRODUC_PRODUC = $idproducto";
 
                 $execProduc = $this->DBConsulta($sql);
+                
+                if (count($execProduc) > 0) {
+                    
+                    $factura = array();
+                    foreach ($execProduc as $key => $i) {
 
-                $factura = $execProduc[0];
-                $factura->produc_cantid = 1;
-
-                $items[] = $factura;
+                        $i->produc_cantid = 1;
+                        $factura[] = $i;
+                    }
+                    $items = $factura;
+                }
             }
 
             $datas['factura'] = $items;

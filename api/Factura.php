@@ -334,7 +334,7 @@ require_once "../config.php";
                             <td colspan="4" rowspan="15">
                                 <div class="row">
                                     <div class="col-6">
-
+                                        <?php if(strtoupper($item->facweb_tipdoc) == 'F'){ ?>
                                         <table class="table table-bordered">
                                             <thead>
                                                 <tr>
@@ -365,6 +365,7 @@ require_once "../config.php";
                                                 ?>
                                             </tbody>
                                         </table>
+                                        <?php } ?>
 
                                     </div>
                                 </div>
