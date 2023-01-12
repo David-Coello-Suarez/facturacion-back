@@ -28,7 +28,7 @@ class Facturacion extends Conexion
             $codEmpresa = isset($data['empresa']) ? intval($data['empresa']) : 0;
             $sucursal = isset($data['sucursal']) ? intval($data['sucursal']) : 0;
             $tipoDocumento  = isset($data['tipoDoc']) ? ($data['tipoDoc']) : "";
-            $fechaFac = date("m/d/Y", strtotime(trim($data['fechaFac'])));
+            $fechaFac = date("d/m/Y", strtotime(trim($data['fechaFac'])));
 
             if ($codEmpresa == 0) throw new Exception("Debe establecer la empresa", 1);
             if ($sucursal == 0) throw new Exception("Debe establecer la sucursal", 1);
