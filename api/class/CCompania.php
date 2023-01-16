@@ -356,14 +356,13 @@ class Compania extends Conexion
 
                 $execSucurs = $this->DBConsulta($sqlSucursal);
 
-
                 if (count($execSucurs) >2) {
 
                 for ($i = 0; $i < count($execSucurs); $i++) {
                     $item->compan_sucurs[] = $execSucurs[$i];
                 }
             }else{
-                $item->compan_sucurs[] = $execSucurs[0];
+                $item->compan_sucurs = $execSucurs;
             }
                 $items[$key] = $item;
             }
