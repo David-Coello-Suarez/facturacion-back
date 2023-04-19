@@ -164,7 +164,7 @@ class Facturacion extends Conexion
             $factura = $exec[0];
 
             $numero_documento = 0;
-            $ambiente = 0;
+            $ambiente = "0";
             $tipo = "";
             $tipoDoc = "";
 
@@ -173,13 +173,13 @@ class Facturacion extends Conexion
                 $tipoDoc = "facweb_numfac";
                 $num = ($factura->sucurs_numfac);
                 $numero_documento = $num + 1;
-                $ambiente = 01;
+                $ambiente = "01";
             } else {
                 $tipo = "sucurs_numncr";
                 $tipoDoc = "facweb_numncr";
                 $num = ($factura->sucurs_numncr);
                 $numero_documento = ($num) + 1;
-                $ambiente = 04;
+                $ambiente = "04";
             }
 
             $numero_documento = str_pad($numero_documento, 15, "0", STR_PAD_LEFT);
@@ -400,9 +400,9 @@ class Facturacion extends Conexion
                 $sql = "SELECT * FROM TB_PRODUC WHERE PRODUC_PRODUC = $idproducto";
 
                 $execProduc = $this->DBConsulta($sql);
-                
+
                 if (count($execProduc) > 0) {
-                    
+
                     $factura = array();
                     foreach ($execProduc as $key => $i) {
 

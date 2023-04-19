@@ -29,7 +29,7 @@ class Funciones
     {
         $numero_documento = trim($numero_documento);
         $numero_documento = str_replace(array("-", " "), "", $numero_documento);
-
+        print_r($numero_documento);
         $suma = 0;
         $factor = 2;
 
@@ -49,6 +49,11 @@ class Funciones
         }
 
         $modulo = 11 - ($suma % 11);
+
+        if ($modulo == 10) {
+            echo"modulo es igual a 1";
+            return (string)"1";
+        }
 
         if ($modulo < 10) {
             return (string)$modulo;
@@ -83,7 +88,7 @@ class Funciones
         return "Error al subir la imagen";
     }
 
-    
+
 
     public static function zero_fill($valor, $long = 3, $dir = STR_PAD_LEFT)
     {

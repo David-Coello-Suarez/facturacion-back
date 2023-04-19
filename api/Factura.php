@@ -123,6 +123,7 @@ require_once "../config.php";
     // END SUCURSAL
 
     // END START Y SUCURSAL
+
     ?>
     <div class="container">
         <div class="row">
@@ -168,7 +169,10 @@ require_once "../config.php";
                         <?php
 
                         if (strtoupper($item->facweb_tipdoc) == 'F') {
-                            print_r($item->facweb_numfac);
+                            $primer3digito = substr($item->facweb_numfac, 0, 3);
+                            $segundo3digito = substr($item->facweb_numfac, 3, 3);
+                            $final = substr($item->facweb_numfac, 6);
+                            print_r("$primer3digito-$segundo3digito-$final");
                         } else {
                             print_r($item->facweb_numncr);
                         }
@@ -334,37 +338,37 @@ require_once "../config.php";
                             <td colspan="4" rowspan="15">
                                 <div class="row">
                                     <div class="col-6">
-                                        <?php if(strtoupper($item->facweb_tipdoc) == 'F'){ ?>
-                                        <table class="table table-bordered">
-                                            <thead>
-                                                <tr>
-                                                    <td class="text-center">
-                                                        Forma pago
-                                                    </td>
-                                                    <td class="text-center">
-                                                        Valor ($)
-                                                    </td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                $sqlFormasPago = "SELECT * FROM TB_PAGWEB WHERE PAGWEB_FACWEB = " . intval($_GET['idFactura']);
+                                        <?php if ($factura->facweb_tipdoc == 'F') { ?>
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            Forma pago
+                                                        </td>
+                                                        <td class="text-center">
+                                                            Valor ($)
+                                                        </td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    $sqlFormasPago = "SELECT * FROM TB_PAGWEB WHERE PAGWEB_FACWEB = " . intval($_GET['idFactura']);
 
-                                                $execForPag = $conexion->DBConsulta($sqlFormasPago);
+                                                    $execForPag = $conexion->DBConsulta($sqlFormasPago);
 
-                                                $fila = "";
+                                                    $fila = "";
 
-                                                foreach ($execForPag as $item) {
-                                                    $nombre = $item->pagweb_descri;
-                                                    $valor  = number_format($item->pagweb_valpag, 2);
+                                                    foreach ($execForPag as $item) {
+                                                        $nombre = $item->pagweb_descri;
+                                                        $valor  = number_format($item->pagweb_valpag, 2);
 
-                                                    $fila .= " <tr > <td class='text-center'>$nombre</td> <td class='text-center'>$valor</td> </tr> ";
-                                                }
+                                                        $fila .= " <tr > <td class='text-center'>$nombre</td> <td class='text-center'>$valor</td> </tr> ";
+                                                    }
 
-                                                echo $fila;
-                                                ?>
-                                            </tbody>
-                                        </table>
+                                                    echo $fila;
+                                                    ?>
+                                                </tbody>
+                                            </table>
                                         <?php } ?>
 
                                     </div>
@@ -462,7 +466,7 @@ require_once "../config.php";
         </div>
     </div>
 
-    <script>
+    <!-- <script>
         window.onload = function() {
             window.print()
 
@@ -470,7 +474,7 @@ require_once "../config.php";
                 window.close();
             }, 100);
         }
-    </script>
+    </script> -->
 
 
 </body>
