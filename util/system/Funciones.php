@@ -29,7 +29,7 @@ class Funciones
     {
         $numero_documento = trim($numero_documento);
         $numero_documento = str_replace(array("-", " "), "", $numero_documento);
-        print_r($numero_documento);
+        // print_r($numero_documento);
         $suma = 0;
         $factor = 2;
 
@@ -63,7 +63,7 @@ class Funciones
             return (string) "0";
         }
 
-        return "K";
+        return "";
     }
 
     public static function subirImg(array $img)
